@@ -1,0 +1,22 @@
+Package: wal
+Type: Package
+Title: Read and Write 'WAL' Bitmap Image Files
+Version: 0.0.1
+Authors@R: person("Tim", "Schäfer", role = c("aut", "cre"), email = "ts+code@rcmd.org", comment = c(ORCID = "0000-0002-3683-8070"))
+Maintainer: Tim Schäfer <ts+code@rcmd.org>
+Description: Read images in WAL file format.
+License: GPL-2
+Encoding: UTF-8
+LazyData: true
+URL: https://github.com/dfsp-spirit/wal
+BugReports: https://github.com/dfsp-spirit/wal/issues
+Imports:
+    pkgfilecache (>= 0.1.1)
+Suggests:
+    knitr,
+    rmarkdown,
+    testthat (>= 2.1.0),
+    jpeg,
+    imager
+VignetteBuilder: knitr
+RoxygenNote: 7.1.1
