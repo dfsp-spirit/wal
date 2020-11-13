@@ -11,6 +11,7 @@ This is WIP.
 
 ## References
 
-Documentation seems sparse. I did not find an official spec so I used the Quake 2 source. Relevant files are:
-* [r_image.c](https://github.com/id-Software/Quake-2/blob/master/ref_soft/r_image.c) with WAL reading function `R_LoadWal`
-* To understand the latter, you will need to have a look at the `miptex_t` struct in [qcommon/qfiles.h](https://github.com/id-Software/Quake-2/blob/master/qcommon/qfiles.h)
+Documentation on the WAL format seems sparse. I did not find an official spec so I used the Quake 2 source code to learn about the format. Relevant files are:
+
+* [r_image.c](https://github.com/id-Software/Quake-2/blob/master/ref_soft/r_image.c) with WAL loading function `R_LoadWal`
+* To understand the latter, you will need to have a look at the `miptex_s` struct in [qcommon/qfiles.h](https://github.com/id-Software/Quake-2/blob/master/qcommon/qfiles.h)
