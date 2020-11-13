@@ -8,6 +8,8 @@
 #'
 #' @param hdr_only logical, whether to read only the header
 #'
+#' @param num_mip_maps integer, the number of mipmap levels stored in the file. Leave this alone unless you know what you are doing.
+#'
 #' @return array with color data, or wal instance (named list) if `hdr` is `TRUE`
 #'
 #' @examples
@@ -38,14 +40,11 @@ read.wal <- function(filepath, hdr = TRUE, hdr_only = FALSE, num_mip_maps = 4L) 
   header$contents = readBin(fh, integer(), n = 1, size = 4, endian = endian);
   header$value = readBin(fh, integer(), n = 1, size = 4, endian = endian);
 
-  header$ident = readBin(fh, integer(), n = 1, size = 1, endian = endian);
-  if(header$ident != 10L) {
-    stop("File not in PCX format.");
-  }
+  #if(header$width > L) {
+  #  stop("File not in WAL format.");
+  #}
 
-  header$paintbrush_version = readBin(fh, integer(), n = 1, size = 1, endian = endian);
-  header$encoding_type = readBin(fh, integer(), n = 1, size = 1, endian = endian); # 0 = none, 1 = runlength enc.
-  header$bitpix = readBin(fh, integer(), n = 1, size = 1, endian = endian); # bits per pixel, defines number of possible colors in image. 1 = 2, 2 = 4, 4 = 16, 8 = 256.
+  # TODO: read data
 
   wal = list('header' = header);
   return(wal);

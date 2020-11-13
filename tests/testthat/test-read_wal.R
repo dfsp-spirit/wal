@@ -7,6 +7,7 @@ testthat::test_that("We can read the Quake 2 Quad Damage base tex if available."
   }
   wal = read.wal(walf);
 
-  testthat::expect_true(is.matrix(pcx$palette));
+  testthat::expect_equal(wal$header$tex_name, "e1u2/basic1_7");
+  testthat::expect_false(is.null(wal$image));
 })
 
