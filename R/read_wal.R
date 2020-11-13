@@ -40,11 +40,13 @@ read.wal <- function(filepath, hdr = TRUE, hdr_only = FALSE, num_mip_maps = 4L) 
   header$contents = readBin(fh, integer(), n = 1, size = 4, endian = endian);
   header$value = readBin(fh, integer(), n = 1, size = 4, endian = endian);
 
-  #if(header$width > L) {
-  #  stop("File not in WAL format.");
-  #}
+  if(header$width < 1L | header$height < 1L) {
+    stop("File not in WAL format (or invalid zero-length image dimension).");
+  }
 
-  # TODO: read data
+  # Read data for all mimaps.
+  mip_level0_data_size = header$width * header$height * (256L + 64L + 16L + 4L) %/% 256L;
+  print(mip_level0_data_size);
 
   wal = list('header' = header);
   return(wal);
