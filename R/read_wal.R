@@ -32,12 +32,10 @@ read.wal <- function(filepath, hdr = TRUE, hdr_only = FALSE, num_mip_maps = 4L) 
   header = list();
 
   header$tex_name = readChar(fh, 32L);
-  #header$tex_name = read.fixed.char.binary(fh, 32L);
-  header$width = readBin(fh, integer(), n = 1, size = 2, signed = FALSE, endian = endian);
-  header$height = readBin(fh, integer(), n = 1, size = 2, signed = FALSE, endian = endian);
-  header$mip_level_offsets = readBin(fh, integer(), n = num_mip_maps, size = 2, signed = FALSE, endian = endian);
-  header$anim_name = readChar(fh, 32L);  # next frame in animation.
-  #header$anim_name =read.fixed.char.binary(fh, 32L);
+  header$width = readBin(fh, integer(), n = 1, size = 4, endian = endian);
+  header$height = readBin(fh, integer(), n = 1, size = 4, endian = endian);
+  header$mip_level_offsets = readBin(fh, integer(), n = num_mip_maps, size = 4, endian = endian);
+  header$anim_name = readChar(fh, 32L);  # Next frame name in animation, if any. Empty string if none, which is the most common case.
   header$flags = readBin(fh, integer(), n = 1, size = 4, endian = endian);
   header$contents = readBin(fh, integer(), n = 1, size = 4, endian = endian);
   header$value = readBin(fh, integer(), n = 1, size = 4, endian = endian);
@@ -46,16 +44,9 @@ read.wal <- function(filepath, hdr = TRUE, hdr_only = FALSE, num_mip_maps = 4L) 
     warning("File not in WAL format (or invalid zero-length image dimension).");
   }
 
-  # Read data for all mimaps.
+  # Read data for all mipmaps.
   mip_level0_data_size = header$width * header$height * (256L + 64L + 16L + 4L) %/% 256L;
-  print(mip_level0_data_size);
 
   wal = list('header' = header);
   return(wal);
-}
-
-#' @keywords internal
-read.fixed.char.binary <- function(filehandle, n, to = "UTF-8") {
-  txt = readBin(filehandle, "raw", n);
-  return(iconv(rawToChar(txt[txt != as.raw(0)]), to = to));
 }
