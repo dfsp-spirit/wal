@@ -1,4 +1,5 @@
 ^.*\.Rproj$
+^c/read_wal.c$
 ^\.Rproj\.user$
 ^Meta$
 ^\.DS_Store$
@@ -12,4 +13,3 @@ CHANGES
 \.travis\.yml
 appveyor\.yml
 ^appveyor\.yml$
-
