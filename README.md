@@ -3,8 +3,7 @@ Read bitmap images in WAL file format in R.
 
 ## About
 
-The WAL file format is an old format for storing indexed bitmap images, used in idtech1 and idtech2 games. The WAL files that hold the Quake 2 textures are stored inside Quake pak file archives (similar to zip format), so you will not find any in your Quake 2 directory unless you extracted them for mapping or modding.
-
+The WAL file format is an old format for storing indexed bitmap images, used as textures in idtech1 and idtech2 games. Note that whe WAL textures are stored inside Quake pak file archives (`pakn.pak`), so you will not see any WAL files in your Quake 2 directory unless you extracted them for mapping or modding.
 
 ## Package API
 
