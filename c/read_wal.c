@@ -37,4 +37,8 @@ int main(int argc, char *argv[]) {
     printf("The flags is %d\n", flags);
     printf("The contents is %d\n", contents);
     printf("The value is %d\n", value);
+
+    // Could read data here.
+
+    fclose(fh);
 }
