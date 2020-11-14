@@ -4,7 +4,7 @@
 \alias{read.wal}
 \title{Read bitmap file in WAL format.}
 \usage{
-read.wal(filepath, hdr = TRUE, hdr_only = FALSE, num_mip_maps = 4L)
+read.wal(filepath, hdr = TRUE, hdr_only = FALSE)
 }
 \arguments{
 \item{filepath}{character string, path to the file including extension}
@@ -12,11 +12,9 @@ read.wal(filepath, hdr = TRUE, hdr_only = FALSE, num_mip_maps = 4L)
 \item{hdr}{logical, whether to return full list with header}
 
 \item{hdr_only}{logical, whether to read only the header}
-
-\item{num_mip_maps}{integer, the number of mipmap levels stored in the file. Leave this alone unless you know what you are doing.}
 }
 \value{
-array with color data, or wal instance (named list) if `hdr` is `TRUE`
+integer pixel matrix, each pixel value is in range 0-255 and refers to an index in a palette. The palette is NOT included in the file, so you will need to define one or get it from elsewhere to see the final image.
 }
 \description{
 Read bitmap file in WAL format.
@@ -25,9 +23,7 @@ Read bitmap file in WAL format.
 \dontrun{
    walf = '~/data/q2_pak0_extracted/textures/e1u2/basic1_7.wal';
    wal = read.wal(walf);
-   plot(wal);
-   # show palette:
-   plot(1:256, col=rgb(wal$palette, maxColorValue = 255));
+   #plot(imager::as.cimg(wal$image))
 }
 
 }
