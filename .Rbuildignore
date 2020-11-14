@@ -1,3 +1,4 @@
+c/
 ^.*\.Rproj$
 ^c/read_wal.c$
 ^\.Rproj\.user$
