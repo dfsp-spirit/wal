@@ -4,7 +4,12 @@
 \alias{read.wal}
 \title{Read bitmap file in WAL format.}
 \usage{
-read.wal(filepath, hdr = TRUE, hdr_only = FALSE)
+read.wal(
+  filepath,
+  hdr = TRUE,
+  hdr_only = FALSE,
+  apply_palette = wal::palette_q2()
+)
 }
 \arguments{
 \item{filepath}{character string, path to the file including extension}
@@ -12,6 +17,8 @@ read.wal(filepath, hdr = TRUE, hdr_only = FALSE)
 \item{hdr}{logical, whether to return full list with header}
 
 \item{hdr_only}{logical, whether to read only the header}
+
+\item{apply_palette}{optional 256 x 3 integer matrix, the palette. Must contain values in range 0..255. Pass `ǸULL` if you do not want to apply any palette. The resulting \code{wal} object will not have an 'image' entry then.}
 }
 \value{
 integer pixel matrix, each pixel value is in range 0-255 and refers to an index in a palette. The palette is NOT included in the file, so you will need to define one or get it from elsewhere to see the final image.
@@ -23,7 +30,7 @@ Read bitmap file in WAL format.
 \dontrun{
    walf = '~/data/q2_pak0_extracted/textures/e1u2/basic1_7.wal';
    wal = read.wal(walf);
-   #plot(imager::as.cimg(wal$image))
+   #plot(imager::as.cimg(wal$image));
 }
 
 }

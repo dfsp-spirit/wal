@@ -1,5 +1,8 @@
 
 
+# rgb(palette_q2[c(1,3,5,7),]/255)
+# palette_q2[c(1,3,5,7),]/255
+
 #' @title Read bitmap file in WAL format.
 #'
 #' @param filepath character string, path to the file including extension
@@ -7,6 +10,8 @@
 #' @param hdr logical, whether to return full list with header
 #'
 #' @param hdr_only logical, whether to read only the header
+#'
+#' @param apply_palette optional 256 x 3 integer matrix, the palette. Must contain values in range 0..255. Pass `ǸULL` if you do not want to apply any palette. The resulting \code{wal} object will not have an 'image' entry then.
 #'
 #' @return integer pixel matrix, each pixel value is in range 0-255 and refers to an index in a palette. The palette is NOT included in the file, so you will need to define one or get it from elsewhere to see the final image.
 #'
@@ -18,7 +23,7 @@
 #' }
 #'
 #' @export
-read.wal <- function(filepath, hdr = TRUE, hdr_only = FALSE) {
+read.wal <- function(filepath, hdr = TRUE, hdr_only = FALSE, apply_palette = wal::palette_q2()) {
   fh = file(filepath, "rb");
   on.exit({ close(fh) });
 
@@ -60,14 +65,56 @@ read.wal <- function(filepath, hdr = TRUE, hdr_only = FALSE) {
     warning(sprintf("Expected %d pixel values, but %d read.\n", mip_level0_data_size, length(raw_data)));
   }
 
-  image_data = matrix(data = raw_data, nrow = header$height, ncol = header$width, byrow = TRUE); # reshaped to image matrix
+  pixel_cmap_indices = matrix(data = raw_data, nrow = header$height, ncol = header$width, byrow = TRUE); # reshaped to image matrix
 
-  wal = list('header' = header, 'image' = image_data);
+  wal = list('header' = header, 'raw_data' = raw_data, 'pixel_cmap_indices' = pixel_cmap_indices);
+  class(wal) = c(class(wal), 'wal');
+
+  if(! is.null(apply_palette)) {
+    channel_red = apply_palette[raw_data, 1];
+    channel_green = apply_palette[raw_data, 2];
+    channel_blue = apply_palette[raw_data, 3];
+    wal$image = array( c( channel_red , channel_green, channel_blue ) , dim = c( header$width , header$height , 3));
+  } else {
+    wal$image = NULL;
+  }
 
   if(hdr) {
     return(wal);
   } else {
+    if(is.null(apply_palette)) {
+      stop("Cannot return image without palette. Set hdr to TRUE or pass non-NULL apply_palette parameter.");
+    }
     return(wal$image);
   }
 }
+
+#' @title S3 plot function for wal image.
+#'
+#' @param x a wal instance.
+#'
+#' @param ... extra args, not used.
+#'
+#' @export
+#' @importFrom graphics plot
+plot.wal <- function(x, ...) {
+  if(requireNamespace('imager', quietly = TRUE)) {
+    if(! is.null(x$image)) {
+      graphics::plot(imager::as.cimg(array(x$image, dim=c(x$header$width, x$header$height, 1, 3))));
+    } else {
+      warning("The wal instance contains no final image, did you set a palette? Using grayscale preview palette.");
+      apply_palette = cbind(0L:255L, 0L:255L, 0L:255L);
+      raw_data = x$raw_data;
+      channel_red = apply_palette[raw_data, 1];
+      channel_green = apply_palette[raw_data, 2];
+      channel_blue = apply_palette[raw_data, 3];
+      img = array( c( channel_red , channel_green, channel_blue ) , dim = c( x$header$width , x$header$height , 3));
+      graphics::plot(imager::as.cimg(array(img, dim=c(x$header$width, x$header$height, 1, 3))));
+    }
+  } else {
+    stop("The 'imager' package must be installed to plot PCX images.");
+  }
+}
+
+
 

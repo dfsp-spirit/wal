@@ -1,6 +1,11 @@
 
-
-palette_q2 = structure(c(0L, 15L, 31L, 47L, 63L, 75L, 91L, 107L, 123L, 139L,
+#' @title Get Q2 palette.
+#'
+#' @return 256 x 3 integer matrix, representing the RGB color values for an index into the palette.
+#'
+#' @export
+palette_q2 <- function() {
+  q2pal = structure(c(0L, 15L, 31L, 47L, 63L, 75L, 91L, 107L, 123L, 139L,
                          155L, 171L, 187L, 203L, 219L, 235L, 99L, 91L, 83L, 79L, 71L,
                          63L, 59L, 51L, 47L, 43L, 39L, 35L, 27L, 23L, 19L, 15L, 95L, 91L,
                          91L, 87L, 83L, 79L, 71L, 63L, 59L, 51L, 47L, 39L, 35L, 27L, 23L,
@@ -64,3 +69,5 @@ palette_q2 = structure(c(0L, 15L, 31L, 47L, 63L, 75L, 91L, 107L, 123L, 139L,
                          0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 255L,
                          0L, 255L, 35L, 23L, 15L, 127L, 83L, 51L, 27L, 199L, 155L, 119L,
                          87L, 83L), .Dim = c(256L, 3L));
+  return(q2pal);
+}
