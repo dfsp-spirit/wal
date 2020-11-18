@@ -71,3 +71,36 @@ palette_q2 <- function() {
                          87L, 83L), .Dim = c(256L, 3L));
   return(q2pal);
 }
+
+
+#' @title Get Q1 palette.
+#'
+#' @return 256 x 3 integer matrix, representing the RGB color values for an index into the palette.
+#'
+#' @export
+palette_q1 <- function() {
+  palette_q1_file = system.file("extdata", "palette_q1.lmp", package = "wal", mustWork = TRUE);
+  lmp = read.lmp(palette_q1_file);
+  return(matrix(lmp, ncol = 3L, byrow = TRUE));
+}
+
+
+
+#' @title Read binary lump, or 'lmp' files.
+#'
+#' @param filepath character string, path to the input file.
+#'
+#' @param dlength the expected data length, in bytes.
+#'
+#' @return vector of dlength unsigned integers in range 0..255.
+#'
+#' @keywords internal
+read.lmp <- function(filepath, dlength = 768L) {
+  fh = file(filepath, "rb");
+  on.exit({ close(fh) });
+
+  endian = 'little';
+
+  raw_data = readBin(fh, integer(), n = dlength, size = 1L, signed = FALSE, endian = endian);
+  return(raw_data);
+}
