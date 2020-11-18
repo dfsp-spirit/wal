@@ -19,7 +19,7 @@
 #' \dontrun{
 #'    walf = '~/data/q2_pak0_extracted/textures/e1u2/basic1_7.wal';
 #'    wal = read.wal(walf);
-#'    #plot(imager::as.cimg(wal$image));
+#'    plot(wal);
 #' }
 #'
 #' @export
@@ -60,6 +60,8 @@ read.wal <- function(filepath, hdr = TRUE, hdr_only = FALSE, apply_palette = wal
 
   seek(fh, where = header$mip_level_offsets[1L], origin = "start");
   raw_data = readBin(fh, integer(), n = mip_level0_data_size, size = 1, signed = FALSE, endian = endian); # vector
+
+  raw_data = raw_data + 1L; # R uses 1-based indices.
 
   if(length(raw_data) != mip_level0_data_size) {
     warning(sprintf("Expected %d pixel values, but %d read.\n", mip_level0_data_size, length(raw_data)));
@@ -129,6 +131,7 @@ plot.wal <- function(x, ...) {
     } else {
       warning("The wal instance contains no final image, did you set a palette? Using grayscale preview palette.");
       apply_palette = cbind(0L:255L, 0L:255L, 0L:255L);
+      check.palette(apply_palette);
       raw_data = x$raw_data;
       channel_red = apply_palette[raw_data, 1];
       channel_green = apply_palette[raw_data, 2];
@@ -140,6 +143,8 @@ plot.wal <- function(x, ...) {
     stop("The 'imager' package must be installed to plot PCX images.");
   }
 }
+
+
 
 
 

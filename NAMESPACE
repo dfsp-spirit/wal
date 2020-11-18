@@ -3,4 +3,8 @@
 S3method(plot,wal)
 export(palette_q2)
 export(read.wal)
+export(wal.export.to.jpeg)
+importFrom(freesurferformats,flip3D)
+importFrom(freesurferformats,rotate3D)
 importFrom(graphics,plot)
+importFrom(jpeg,writeJPEG)

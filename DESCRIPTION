@@ -11,12 +11,12 @@ LazyData: true
 URL: https://github.com/dfsp-spirit/wal
 BugReports: https://github.com/dfsp-spirit/wal/issues
 Imports:
-    pkgfilecache (>= 0.1.1)
+    freesurferformats (>= 0.1.12),
+    imager,
+    jpeg
 Suggests:
     knitr,
     rmarkdown,
     testthat (>= 2.1.0),
-    jpeg,
-    imager
 VignetteBuilder: knitr
 RoxygenNote: 7.1.1
