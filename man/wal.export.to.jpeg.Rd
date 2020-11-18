@@ -4,7 +4,7 @@
 \alias{wal.export.to.jpeg}
 \title{Export wal instance to JPEG format image file.}
 \usage{
-wal.export.to.jpeg(wal, filepath, apply_palette = wal::pal_q2())
+wal.export.to.jpeg(wal, filepath, apply_palette = wal::pal_q2(), ...)
 }
 \arguments{
 \item{wal}{a wal instance, as returned by \code{read.wal}}
@@ -12,6 +12,8 @@ wal.export.to.jpeg(wal, filepath, apply_palette = wal::pal_q2())
 \item{filepath}{character string, path to the JPEG file to write, including the file extension.}
 
 \item{apply_palette}{optional 256 x 3 integer matrix, the palette. Must contain values in range 0..255. Pass `ǸULL` if you do not want to apply any palette. The resulting \code{wal} object will not have an 'image' entry then.}
+
+\item{...}{extra parameters passed to \code{jpeg::writeJPEG}. Can be used to set JPEG quality.}
 }
 \description{
 Export wal instance to JPEG format image file.
