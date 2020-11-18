@@ -1,6 +1,6 @@
 
 ## 24 bit JPEG/PNG colors to indexed WAL colors:
-# convert RGB colors to LAB space (colorscience::rgb2x)
+# convert RGB colors to LAB space (colorscience::rgb2x or see grDevices::convertColor, https://cran.r-project.org/web/packages/colordistance/vignettes/lab-analyses.html)
 # use deltaE metric to compute distances (colorscience::deltaE2000())
 # pick color with
 
