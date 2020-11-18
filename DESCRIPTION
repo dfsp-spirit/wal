@@ -13,7 +13,8 @@ BugReports: https://github.com/dfsp-spirit/wal/issues
 Imports:
     freesurferformats (>= 0.1.12),
     imager,
-    jpeg
+    jpeg,
+    png
 Suggests:
     knitr,
     rmarkdown,
