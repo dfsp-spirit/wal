@@ -31,4 +31,10 @@ Documentation on the WAL format seems sparse. I did not find any official spec s
 * [r_image.c](https://github.com/id-Software/Quake-2/blob/master/ref_soft/r_image.c) with WAL loading function `R_LoadWal`
 * To understand the latter, you will need to have a look at the `miptex_s` struct in [qfiles.h](https://github.com/id-Software/Quake-2/blob/master/qcommon/qfiles.h) and at the `image_s` struct in [r_local.h](https://github.com/id-Software/Quake-2/blob/master/ref_soft/r_local.h)
 
-As such, this package reads *what Quake 2 considers* the WAL format.
+## Unit tests and CI
+
+[![Build Status](https://travis-ci.org/dfsp-spirit/wal.svg?branch=master)](https://travis-ci.org/dfsp-spirit/wal) Travis CI under Linux
+
+[![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/dfsp-spirit/wal?branch=master&svg=true)](https://ci.appveyor.com/project/dfsp-spirit/wal) AppVeyor CI under Windows
+
+
