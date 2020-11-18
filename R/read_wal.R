@@ -1,7 +1,7 @@
 
 
-# rgb(palette_q2[c(1,3,5,7),]/255)
-# palette_q2[c(1,3,5,7),]/255
+# rgb(pal_q2[c(1,3,5,7),]/255)
+# pal_q2[c(1,3,5,7),]/255
 
 #' @title Read bitmap file in WAL format.
 #'
@@ -23,7 +23,7 @@
 #' }
 #'
 #' @export
-read.wal <- function(filepath, hdr = TRUE, hdr_only = FALSE, apply_palette = wal::palette_q2()) {
+read.wal <- function(filepath, hdr = TRUE, hdr_only = FALSE, apply_palette = wal::pal_q2()) {
   fh = file(filepath, "rb");
   on.exit({ close(fh) });
 

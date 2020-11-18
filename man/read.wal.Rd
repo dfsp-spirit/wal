@@ -4,12 +4,7 @@
 \alias{read.wal}
 \title{Read bitmap file in WAL format.}
 \usage{
-read.wal(
-  filepath,
-  hdr = TRUE,
-  hdr_only = FALSE,
-  apply_palette = wal::palette_q2()
-)
+read.wal(filepath, hdr = TRUE, hdr_only = FALSE, apply_palette = wal::pal_q2())
 }
 \arguments{
 \item{filepath}{character string, path to the file including extension}

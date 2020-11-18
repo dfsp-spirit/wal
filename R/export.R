@@ -10,7 +10,7 @@
 #' @importFrom jpeg writeJPEG
 #' @importFrom freesurferformats rotate3D flip3D
 #' @export
-wal.export.to.jpeg <- function(wal, filepath, apply_palette = wal::palette_q2()) {
+wal.export.to.jpeg <- function(wal, filepath, apply_palette = wal::pal_q2()) {
   if(! is.character(filepath)) {
     stop("Parameter 'filepath' must be a character string.");
   }

@@ -4,7 +4,7 @@
 \alias{wal.export.to.jpeg}
 \title{Export wal instance to JPEG format image file.}
 \usage{
-wal.export.to.jpeg(wal, filepath, apply_palette = wal::palette_q2())
+wal.export.to.jpeg(wal, filepath, apply_palette = wal::pal_q2())
 }
 \arguments{
 \item{wal}{a wal instance, as returned by \code{read.wal}}

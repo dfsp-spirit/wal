@@ -4,7 +4,7 @@
 #' @return 256 x 3 integer matrix, representing the RGB color values for an index into the palette.
 #'
 #' @export
-palette_q2 <- function() {
+pal_q2 <- function() {
   q2pal = structure(c(0L, 15L, 31L, 47L, 63L, 75L, 91L, 107L, 123L, 139L,
                          155L, 171L, 187L, 203L, 219L, 235L, 99L, 91L, 83L, 79L, 71L,
                          63L, 59L, 51L, 47L, 43L, 39L, 35L, 27L, 23L, 19L, 15L, 95L, 91L,
@@ -78,7 +78,7 @@ palette_q2 <- function() {
 #' @return 256 x 3 integer matrix, representing the RGB color values for an index into the palette.
 #'
 #' @export
-palette_q1 <- function() {
+pal_q1 <- function() {
   palette_q1_file = system.file("extdata", "palette_q1.lmp", package = "wal", mustWork = TRUE);
   lmp = read.lmp(palette_q1_file);
   return(matrix(lmp, ncol = 3L, byrow = TRUE));
