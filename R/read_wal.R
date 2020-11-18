@@ -71,6 +71,7 @@ read.wal <- function(filepath, hdr = TRUE, hdr_only = FALSE, apply_palette = wal
   class(wal) = c(class(wal), 'wal');
 
   if(! is.null(apply_palette)) {
+    check.palette(apply_palette);
     channel_red = apply_palette[raw_data, 1];
     channel_green = apply_palette[raw_data, 2];
     channel_blue = apply_palette[raw_data, 3];
@@ -88,6 +89,30 @@ read.wal <- function(filepath, hdr = TRUE, hdr_only = FALSE, apply_palette = wal
     return(wal$image);
   }
 }
+
+
+#' @title Check palette, stop on invalid data.
+#'
+#' @param pal a palette, i.e., a 256 x 3 integer matrix, with values in range 0..255L.
+#'
+#' @keywords internal
+check.palette <- function(pal) {
+  if(! is.matrix(pal)) {
+    stop("Palette must be a matrix.");
+  }
+  if( ! all.equal(dim(pal), c(256, 3))) {
+    stop("Palette must be a 256 x 3 matrix.");
+  }
+  if(min(pal) < 0L | max(pal) > 255L) {
+    stop("All palette values must be in range 0..255.")
+  }
+  if(max(pal) <= 1L) {
+    warning(sprintf("Palette max value is %d, but the values must be in range 0..255.\n", max(pal)));
+  }
+  return(invisible(NULL));
+}
+
+
 
 #' @title S3 plot function for wal image.
 #'
