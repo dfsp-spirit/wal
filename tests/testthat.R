@@ -1,4 +1,4 @@
 library(testthat)
-library(pcx)
+library(wal)
 
-test_check("pcx")
+test_check("wal")
