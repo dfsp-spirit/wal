@@ -12,8 +12,6 @@ testthat::test_that("We can read the Quake 2 Quad Damage base tex if available."
 })
 
 
-
-
 # read the Quake 2 palette (requires extracted pak0.pak):
 # pcx_palette = pcx::read.pcx("~/data/q2_pak/pics/colormap.pcx")
 # pal = pcx$palette_rgb;

@@ -105,6 +105,7 @@ read.wal <- function(filepath, hdr = TRUE, hdr_only = FALSE, apply_palette = wal
   }
 
   wal$image = apply.palette.to.rawdata(raw_data, apply_palette, header$width, header$height);
+  wal$file_data_all_mipmaps = c(wal$raw_data, wal$raw_data_mip_level1, wal$raw_data_mip_level2, wal$raw_data_mip_level3);
 
   if(hdr) {
     return(wal);
