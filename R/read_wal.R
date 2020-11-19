@@ -29,6 +29,7 @@ read.wal <- function(filepath, hdr = TRUE, hdr_only = FALSE, apply_palette = wal
 
   endian = 'little';
   num_mip_maps = 4L;
+  read_mip_maps = TRUE;
 
   wal = list();
   header = list();
@@ -58,10 +59,18 @@ read.wal <- function(filepath, hdr = TRUE, hdr_only = FALSE, apply_palette = wal
     warning(sprintf("Expected %d pixel values in image based on width %d and height %d, but first mipmap size is %d.\n", mip_level0_data_size, header$width * header$height, (header$mip_level_offsets[2L] - header$mip_level_offsets[1L])));
   }
 
+  header$mipmaps = list();
+  header$mipmaps$mip_level0_data_size = mip_level0_data_size;
+  header$mipmaps$mip_level1_data_size = header$mip_level_offsets[3L] - header$mip_level_offsets[2L];
+  header$mipmaps$mip_level2_data_size = header$mip_level_offsets[4L] - header$mip_level_offsets[3L];
+  seek(fh, where = 0L, origin = "end"); end_pos = seek(fh, where = NA); # Find file size (last position).
+  header$mipmaps$mip_level3_data_size = end_pos - header$mip_level_offsets[4L];
+
+
   seek(fh, where = header$mip_level_offsets[1L], origin = "start");
   raw_data = readBin(fh, integer(), n = mip_level0_data_size, size = 1, signed = FALSE, endian = endian); # vector
+  raw_data = raw_data + 1L; # R uses 1-based indices. Note that raw_data is for first mipmap only.
 
-  raw_data = raw_data + 1L; # R uses 1-based indices.
 
   if(length(raw_data) != mip_level0_data_size) {
     warning(sprintf("Expected %d pixel values, but %d read.\n", mip_level0_data_size, length(raw_data)));
@@ -74,13 +83,28 @@ read.wal <- function(filepath, hdr = TRUE, hdr_only = FALSE, apply_palette = wal
 
   if(! is.null(apply_palette)) {
     check.palette(apply_palette);
-    channel_red = apply_palette[raw_data, 1];
-    channel_green = apply_palette[raw_data, 2];
-    channel_blue = apply_palette[raw_data, 3];
-    wal$image = array( c( channel_red , channel_green, channel_blue ) , dim = c( header$width , header$height , 3));
-  } else {
-    wal$image = NULL;
   }
+
+  wal$header$mipmaps$mip_level0_dim = c(wal$header$width, wal$header$height);
+
+  if(read_mip_maps) {
+    seek(fh, where = header$mip_level_offsets[2L], origin = "start");
+    wal$raw_data_mip_level1 = readBin(fh, integer(), n = header$mipmaps$mip_level1_data_size, size = 1, signed = FALSE, endian = endian) + 1L;
+    wal$image_mip_level1 = apply.palette.to.rawdata(wal$raw_data_mip_level1, apply_palette, header$width / 2L, header$height / 2L);
+    wal$header$mipmaps$mip_level1_dim = c(wal$header$width / 2L, wal$header$height / 2L);
+
+    seek(fh, where = header$mip_level_offsets[3L], origin = "start");
+    wal$raw_data_mip_level2 = readBin(fh, integer(), n = header$mipmaps$mip_level2_data_size, size = 1, signed = FALSE, endian = endian) + 1L;
+    wal$image_mip_level2 = apply.palette.to.rawdata(wal$raw_data_mip_level2, apply_palette, header$width / 4L, header$height / 4L);
+    wal$header$mipmaps$mip_level2_dim = c(wal$header$width / 4L, wal$header$height / 4L);
+
+    seek(fh, where = header$mip_level_offsets[4L], origin = "start");
+    wal$raw_data_mip_level3 = readBin(fh, integer(), n = header$mipmaps$mip_level3_data_size, size = 1, signed = FALSE, endian = endian) + 1L;
+    wal$image_mip_level3 = apply.palette.to.rawdata(wal$raw_data_mip_level3, apply_palette, header$width / 8L, header$height / 8L);
+    wal$header$mipmaps$mip_level3_dim = c(wal$header$width / 8L, wal$header$height / 8L);
+  }
+
+  wal$image = apply.palette.to.rawdata(raw_data, apply_palette, header$width, header$height);
 
   if(hdr) {
     return(wal);
@@ -89,6 +113,29 @@ read.wal <- function(filepath, hdr = TRUE, hdr_only = FALSE, apply_palette = wal
       stop("Cannot return image without palette. Set hdr to TRUE or pass non-NULL apply_palette parameter.");
     }
     return(wal$image);
+  }
+}
+
+
+#' @title Apply a palette to index data to create a 2D image.
+#'
+#' @param raw_data integer vector of pixel data, each entry represents an index into the palette.
+#'
+#' @param apply_palette integer matrix, the palette.
+#'
+#' @param img_width integer, the width of the image to create.
+#'
+#' @param img_height integer, the height of the image to create.
+#'
+#' @keywords internal
+apply.palette.to.rawdata <- function(raw_data, apply_palette, img_width, img_height) {
+  if(! is.null(apply_palette)) {
+    channel_red = apply_palette[raw_data, 1];
+    channel_green = apply_palette[raw_data, 2];
+    channel_blue = apply_palette[raw_data, 3];
+    return(array( c( channel_red , channel_green, channel_blue ) , dim = c( img_width , img_height , 3)));
+  } else {
+    return(NULL);
   }
 }
 
@@ -132,11 +179,7 @@ plot.wal <- function(x, ...) {
       warning("The wal instance contains no final image, did you set a palette? Using grayscale preview palette.");
       apply_palette = cbind(0L:255L, 0L:255L, 0L:255L);
       check.palette(apply_palette);
-      raw_data = x$raw_data;
-      channel_red = apply_palette[raw_data, 1];
-      channel_green = apply_palette[raw_data, 2];
-      channel_blue = apply_palette[raw_data, 3];
-      img = array( c( channel_red , channel_green, channel_blue ) , dim = c( x$header$width , x$header$height , 3));
+      img = apply.palette.to.rawdata(x$raw_data, apply_palette, x$header$width , x$header$height);
       graphics::plot(imager::as.cimg(array(img, dim=c(x$header$width, x$header$height, 1, 3))));
     }
   } else {
@@ -145,6 +188,54 @@ plot.wal <- function(x, ...) {
 }
 
 
+#' @title Plot a mipmap level from a WAL image.
+#'
+#' @param wal a WAL image instance, as returned by \code{read.wal}.
+#'
+#' @param mip_level integer in range 0..3, the mipmap to plot. Level 0 is the original full-size image, the other ones get smaller and smaller (by factor 2 on each dimension, so 1/4th the size of their predecessor).
+#'
+#' @inheritParams read.wal
+#'
+#' @export
+plotwal.mipmap <- function(wal, mip_level = 0L, apply_palette = wal::pal_q2()) {
+  if(mip_level < 0L | mip_level > 3L) {
+    stop("Paramter 'mip_level' must be an integer in range 0..3.");
+  }
+  if(mip_level == 0L) {
+    graphics::plot(wal);
+  } else {
+    if(mip_level == 1L) {
+      img = wal$image_mip_level1;
+      raw_data = wal$raw_data_mip_level1;
+      img_width = wal$header$mipmaps$mip_level1_dim[1];
+      img_height = wal$header$mipmaps$mip_level1_dim[2];
+    } else if(mip_level == 2L) {
+      img = wal$image_mip_level2;
+      raw_data = wal$raw_data_mip_level2;
+      img_width = wal$header$mipmaps$mip_level2_dim[1];
+      img_height = wal$header$mipmaps$mip_level2_dim[2];
+    } else { # 3
+      img = wal$image_mip_level3;
+      raw_data = wal$raw_data_mip_level3;
+      img_width = wal$header$mipmaps$mip_level3_dim[1];
+      img_height = wal$header$mipmaps$mip_level3_dim[2];
+    }
+
+
+    if(! is.null(img)) {
+      graphics::plot(imager::as.cimg(array(img, dim=c(img_width, img_height, 1, 3))));
+    } else {
+      if(is.null(apply_palette)) {
+        warning("The wal instance contains no final image and none supplied in parameter 'apply_palette'. Using grayscale preview palette.");
+        apply_palette = cbind(0L:255L, 0L:255L, 0L:255L);
+      }
+      check.palette(apply_palette);
+      img = apply.palette.to.rawdata(raw_data, apply_palette, img_width , img_height);
+      graphics::plot(imager::as.cimg(array(img, dim=c(img_width, img_height, 1, 3))));
+    }
+
+  }
+}
 
 
 

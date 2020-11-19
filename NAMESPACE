@@ -3,6 +3,7 @@
 S3method(plot,wal)
 export(pal_q1)
 export(pal_q2)
+export(plotwal.mipmap)
 export(read.wal)
 export(wal.export.to.jpeg)
 export(wal.export.to.png)
