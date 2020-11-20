@@ -40,6 +40,20 @@ img.to.wal <- function(in_image, apply_palette = wal::pal_q2()) {
 }
 
 
+#' @title Given the pixel data for the largest image, generate the full data for all mipmaps.
+#'
+#' @param raw_data_mip_level0 integer vector or matrix, the image data for the largest mipmap.
+#'
+#' @param width integer, width of image for mip level 0
+#'
+#' @param height integer, width of image for mip level 0
+#'
+#' @keywords internal
+expand.rawdata.to.mipmaps <- function(raw_data_mip_level0, width, height) {
+  raw_data_mip_level0 = as.integer(raw_data_mip_level0);
+}
+
+
 #' @title Find closest color from palette for each RGB color.
 #'
 #' @description Find closest color from a palette for given colors. The similarity method used to define 'closest' is deltaE, and the input RGB colors are transformed to LAB space for the computation, assuming they are given in sRGB space.
