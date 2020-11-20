@@ -14,7 +14,8 @@ Imports:
     freesurferformats (>= 0.1.12),
     imager,
     jpeg,
-    png
+    png,
+    spacesXYZ
 Suggests:
     knitr,
     rmarkdown,

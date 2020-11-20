@@ -34,7 +34,7 @@ From your R session:
 * Visualization of WAL images in R, including all mipmap levels (requires a palette).
 * Export of WAL images to PNG and JPEG format files (requires a palette).
 * Two important palettes are included: the Q1 and Q2 palettes.
-
+* Writing of a WAL image instance to a new file in WAL format.
 
 ## References
 
