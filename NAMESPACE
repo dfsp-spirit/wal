@@ -2,6 +2,7 @@
 
 S3method(plot,wal)
 export(closest.color.from.palette)
+export(img.to.wal)
 export(pal_q1)
 export(pal_q2)
 export(plotwal.mipmap)

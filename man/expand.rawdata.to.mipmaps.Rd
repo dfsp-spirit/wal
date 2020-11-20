@@ -4,7 +4,7 @@
 \alias{expand.rawdata.to.mipmaps}
 \title{Given the pixel data for the largest image, generate the full data for all mipmaps.}
 \usage{
-expand.rawdata.to.mipmaps(raw_data_mip_level0, width, height)
+expand.rawdata.to.mipmaps(raw_data_mip_level0, width, height, byrow = TRUE)
 }
 \arguments{
 \item{raw_data_mip_level0}{integer vector or matrix, the image data for the largest mipmap.}

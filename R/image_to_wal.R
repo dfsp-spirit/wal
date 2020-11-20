@@ -14,6 +14,7 @@
 #'    wal = img.to.wal(jpeg::readJPEG("~/mytex.jpg"));
 #' }
 #'
+#' @export
 img.to.wal <- function(in_image, apply_palette = wal::pal_q2()) {
   if(length(dim(in_image)) != 3L) {
     stop("Parameter 'in_image' must have 3 dimensions: image width, height, and channels (R, G, B).");
@@ -49,8 +50,43 @@ img.to.wal <- function(in_image, apply_palette = wal::pal_q2()) {
 #' @param height integer, width of image for mip level 0
 #'
 #' @keywords internal
-expand.rawdata.to.mipmaps <- function(raw_data_mip_level0, width, height) {
-  raw_data_mip_level0 = as.integer(raw_data_mip_level0);
+expand.rawdata.to.mipmaps <- function(raw_data_mip_level0, width, height, byrow = TRUE) {
+  if(! is.matrix(raw_data_mip_level0)) {
+    raw_data_mip_level0 = matrix(raw_data_mip_level0, ncol = width, byrow = byrow);
+  }
+
+  mip_level1 = half.image(raw_data_mip_level0, byrow = byrow);
+  mip_level2 = half.image(mip_level1, byrow = byrow);
+  mip_level3 = half.image(mip_level2, byrow = byrow);
+  return(c(as.integer(raw_data_mip_level0), as.integer(mip_level1), as.integer(mip_level2), as.integer(mip_level3)));
+}
+
+
+#' @title Reduce image size by 2 along both axes by dropping pixels.
+#'
+#' @param image_data integer matrix, a 1-channel image.
+#'
+#' @keywords internal
+half.image <- function(image_data, byrow = TRUE) {
+  if(! is.matrix(image_data)) {
+    stop("Parameter 'image_data' must be a matrix.");
+  }
+  mip_data = rep(NA, ((ncol(image_data) / 2L) * (nrow(image_data) / 2L)));
+
+  current_index = 1L;
+  for(row_idx in 1:nrow(image_data)) {
+    for(col_idx in 1:ncol(image_data)) {
+      if(row_idx %% 2 == 0L) {
+        if(col_idx %% 2 == 0L) {
+          mip_data[current_index] = image_data[row_idx, col_idx];
+          current_index = current_index + 1L;
+        }
+      }
+    }
+  }
+
+  mip_data = matrix(mip_data, ncol = (ncol(image_data) / 2L), byrow = byrow);
+  return(mip_data);
 }
 
 
