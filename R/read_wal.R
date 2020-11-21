@@ -177,7 +177,7 @@ plot.wal <- function(x, ...) {
     if(! is.null(x$image)) {
       graphics::plot(imager::as.cimg(array(x$image, dim=c(x$header$width, x$header$height, 1, 3))));
     } else {
-      warning("The wal instance contains no final image, did you set a palette? Using grayscale preview palette.");
+      warning("The wal instance contains no final image, using grayscale preview palette. Use 'plotwal.mipmap()' to set palette for viewing.");
       apply_palette = cbind(0L:255L, 0L:255L, 0L:255L);
       check.palette(apply_palette);
       img = apply.palette.to.rawdata(x$raw_data, apply_palette, x$header$width , x$header$height);
@@ -234,7 +234,6 @@ plotwal.mipmap <- function(wal, mip_level = 0L, apply_palette = wal::pal_q2()) {
       img = apply.palette.to.rawdata(raw_data, apply_palette, img_width , img_height);
       graphics::plot(imager::as.cimg(array(img, dim=c(img_width, img_height, 1, 3))));
     }
-
   }
 }
 

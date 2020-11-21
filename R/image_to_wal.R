@@ -15,7 +15,7 @@
 #' }
 #'
 #' @export
-img.to.wal <- function(in_image, apply_palette = wal::pal_q2()) {
+img.to.wal <- function(in_image, apply_palette = wal::pal_q2(), wal = wal.template()) {
   if(length(dim(in_image)) != 3L) {
     stop("Parameter 'in_image' must have 3 dimensions: image width, height, and channels (R, G, B).");
   }
@@ -37,7 +37,38 @@ img.to.wal <- function(in_image, apply_palette = wal::pal_q2()) {
     stop(sprintf("Input image has invalid height %d, must be a power of 2 (8, 16, 32, 64, ...).", height));
   }
 
+  palette_col_indices = closest.color.from.palette(in_image, apply_palette);
 
+
+}
+
+
+#' @title Generate a WAL structure template.
+#'
+#' @description Generates a WAL instance that can be modified and filled with new data. The template represents a black 32x32 image (if the palette used to display it adhers to the convention that the first color is black). The indices used are 1-based (black is at index 1, not 0).
+#'
+#' @keywords internal
+wal.template <- function() {
+  wal = list('header' = list());
+
+  wal$header$tex_name = "e1u1/black";
+  wal$header$width = 32L;
+  wal$header$height = 32L;
+
+  # the last (4th) offset is the beginning of the data for the last mipmap, the end is the EOF.
+  wal$header$mip_level_offsets = c(100L, (100L + 32*32), (100L + 32*32 + 16*16),  (100L + 32*32 + 16*16 + 8*8));
+  wal$header$anim_name = "";
+  wal$header$flags = 0L;
+  wal$header$contents = 0L;
+  wal$header$value = 0L;
+
+  num_values = 32*32 + 16*16 + 8*8 + 4*4; # for all mipmaps
+  wal$file_data_all_mipmaps = rep(1L, num_values); # the first value in the palette is black.
+
+  wal$raw_data = wal$file_data_all_mipmaps[1:(32*32)];
+
+  class(wal) = c('wal', class(wal));
+  return(wal);
 }
 
 

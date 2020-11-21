@@ -4,7 +4,7 @@
 \alias{img.to.wal}
 \title{Convert image to WAL instance.}
 \usage{
-img.to.wal(in_image, apply_palette = wal::pal_q2())
+img.to.wal(in_image, apply_palette = wal::pal_q2(), wal = wal.template())
 }
 \arguments{
 \item{in_image}{numeric matrix with 3 dimensions: widt, height, channels. Values must be in range 0..1. This is the image format returned by \code{jpeg::readJPEG} and \code{png::readPNG}. The image can have arbitrary colors, but the colors in the final WAL image will be limited to the palette. Both the width and height must be powers of 2 (>= 8) typical idtech1/2 textures use 32, 64, ..., 512. The reason is the mipmaps.}
