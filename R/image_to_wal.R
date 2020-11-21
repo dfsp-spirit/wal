@@ -24,25 +24,67 @@ img.to.wal <- function(in_image, apply_palette = wal::pal_q2(), wal = wal.templa
 
   check.palette(apply_palette);
 
-  width = dim(in_image)[1];
-  height = dim(in_image)[2];
+  wal$header$width = dim(in_image)[1];
+  wal$header$height = dim(in_image)[2];
   num_channels = dim(in_image)[3];
 
   if(num_channels != 3L) {
     stop("Parameter 'in_image': third dimension must have length 3 (channels R, G, B).");
   }
-  supported_tex_sizes = c(8L, 16L, 32L, 64L, 128L, 256L, 512L, 1024L, 2048L, 4096L, 8192L);
-  if( ! width %in% supported_tex_sizes) {
-    stop(sprintf("Input image has invalid width %d, must be a power of 2 (8, 16, 32, 64, ...).", width));
+  supported_tex_sizes = c(8L, 16L, 32L, 64L, 128L, 256L, 512L, 1024L, 2048L, 4096L, 8192L, 16384L);
+  if( ! wal$header$width %in% supported_tex_sizes) {
+    stop(sprintf("Input image has invalid width %d, must be a power of 2 (8, 16, 32, 64, ...).", wal$header$width));
   }
-  if( ! height %in% supported_tex_sizes) {
-    stop(sprintf("Input image has invalid height %d, must be a power of 2 (8, 16, 32, 64, ...).", height));
+  if( ! wal$header$height %in% supported_tex_sizes) {
+    stop(sprintf("Input image has invalid height %d, must be a power of 2 (8, 16, 32, 64, ...).", wal$header$height));
   }
 
-  palette_col_indices = closest.color.from.palette(in_image, apply_palette);
+  in_image_matrix = matrix(in_image, c((wal$header$width * wal$header$height), 3L));
+  palette_col_indices = closest.color.from.palette(in_image_matrix, apply_palette);
+
+  wal$file_data_all_mipmaps = palette_col_indices;
+
+  wal$header$mip_level_offsets = get.mipmap.data.offsets(wal$header$width, wal$header$height);
 
 
 }
+
+#' @title Compute length of mipmaps in bytes from width and height of largest image (mipmap0).
+#'
+#' @param mm0_width integer, width of mipmap 0
+#'
+#' @param mm0_height integer, height of mipmap 0
+#'
+#' @return integer vector of length 4, the lengths.
+#'
+#' @keywords internal
+get.mipmap.data.lengths <- function(mm0_width, mm0_height) {
+  m0_l = mm0_width * mm0_height;
+  m1_l = (mm0_width/2) * (mm0_height/2);
+  m2_l = (mm0_width/4) * (mm0_height/4);
+  m3_l = (mm0_width/8) * (mm0_height/8);
+  return(c(m0_l, m1_l, m2_l, m3_l));
+}
+
+
+#' @title Get mipmap offsets for WAL header, based on mipmap sizes and start offset.
+#'
+#' @inheritParams get.mipmap.data.lengths
+#'
+#' @param start_at integer, the offset at which the data starts in the file. Must be 100L for WAL format.
+#'
+#' @return integer vector of length 4, the offsets.
+#'
+#' @keywords internal
+get.mipmap.data.offsets <- function(mm0_width, mm0_height, start_at = 100L) {
+  mipmaps_lengths = get.mipmap.data.lengths(mm0_width, mm0_height);
+  m0_o = start_at;
+  m1_o = start_at + mipmaps_lengths[1];
+  m2_o = start_at + mipmaps_lengths[1] + mipmaps_lengths[2];
+  m3_o = start_at + mipmaps_lengths[1] + mipmaps_lengths[2] + mipmaps_lengths[3];
+  return(c(m0_o, m1_o, m2_o, m3_o));
+}
+
 
 
 #' @title Generate a WAL structure template.
