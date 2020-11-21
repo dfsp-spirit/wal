@@ -7,6 +7,8 @@
 #'
 #' @param apply_palette n x 3 integer matrix, the palette for the WAL image. This is not saved to the wal image, but still required because the colors from the \code{in_image} will be adapted to the palette colors (replaced with the most similar ones). If the palette does not cover the colors in the source image well, the resulting WAL image will look bad (dissimilar to the source image).
 #'
+#' @inheritParams writeWAL
+#'
 #' @return wal instance
 #'
 #' @examples

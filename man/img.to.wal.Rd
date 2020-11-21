@@ -10,6 +10,8 @@ img.to.wal(in_image, apply_palette = wal::pal_q2(), wal = wal.template())
 \item{in_image}{numeric matrix with 3 dimensions: widt, height, channels. Values must be in range 0..1. This is the image format returned by \code{jpeg::readJPEG} and \code{png::readPNG}. The image can have arbitrary colors, but the colors in the final WAL image will be limited to the palette. Both the width and height must be powers of 2 (>= 8) typical idtech1/2 textures use 32, 64, ..., 512. The reason is the mipmaps.}
 
 \item{apply_palette}{n x 3 integer matrix, the palette for the WAL image. This is not saved to the wal image, but still required because the colors from the \code{in_image} will be adapted to the palette colors (replaced with the most similar ones). If the palette does not cover the colors in the source image well, the resulting WAL image will look bad (dissimilar to the source image).}
+
+\item{wal}{a wal instance. Note that 1 will be substracted from the data when it is written, as indices are stored 0-based in the file.}
 }
 \value{
 wal instance
