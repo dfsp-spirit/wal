@@ -203,38 +203,40 @@ plotwal.mipmap <- function(wal, mip_level = 0L, apply_palette = wal::pal_q2()) {
     stop("Paramter 'mip_level' must be an integer in range 0..3.");
   }
   if(mip_level == 0L) {
-    graphics::plot(wal);
-  } else {
-    if(mip_level == 1L) {
-      img = wal$image_mip_level1;
-      raw_data = wal$raw_data_mip_level1;
-      img_width = wal$header$mipmaps$mip_level1_dim[1];
-      img_height = wal$header$mipmaps$mip_level1_dim[2];
-    } else if(mip_level == 2L) {
-      img = wal$image_mip_level2;
-      raw_data = wal$raw_data_mip_level2;
-      img_width = wal$header$mipmaps$mip_level2_dim[1];
-      img_height = wal$header$mipmaps$mip_level2_dim[2];
-    } else { # 3
-      img = wal$image_mip_level3;
-      raw_data = wal$raw_data_mip_level3;
-      img_width = wal$header$mipmaps$mip_level3_dim[1];
-      img_height = wal$header$mipmaps$mip_level3_dim[2];
-    }
-
-
-    if(! is.null(img)) {
-      graphics::plot(imager::as.cimg(array(img, dim=c(img_width, img_height, 1, 3))));
-    } else {
-      if(is.null(apply_palette)) {
-        warning("The wal instance contains no final image and none supplied in parameter 'apply_palette'. Using grayscale preview palette.");
-        apply_palette = cbind(0L:255L, 0L:255L, 0L:255L);
-      }
-      check.palette(apply_palette);
-      img = apply.palette.to.rawdata(raw_data, apply_palette, img_width , img_height);
-      graphics::plot(imager::as.cimg(array(img, dim=c(img_width, img_height, 1, 3))));
-    }
+    img = wal$image;
+    raw_data = wal$raw_data;
+    img_width = wal$header$width;
+    img_height = wal$header$height;
+  } else if(mip_level == 1L) {
+    img = wal$image_mip_level1;
+    raw_data = wal$raw_data_mip_level1;
+    img_width = wal$header$mipmaps$mip_level1_dim[1];
+    img_height = wal$header$mipmaps$mip_level1_dim[2];
+  } else if(mip_level == 2L) {
+    img = wal$image_mip_level2;
+    raw_data = wal$raw_data_mip_level2;
+    img_width = wal$header$mipmaps$mip_level2_dim[1];
+    img_height = wal$header$mipmaps$mip_level2_dim[2];
+  } else { # 3
+    img = wal$image_mip_level3;
+    raw_data = wal$raw_data_mip_level3;
+    img_width = wal$header$mipmaps$mip_level3_dim[1];
+    img_height = wal$header$mipmaps$mip_level3_dim[2];
   }
+
+
+  if(! is.null(img)) {
+    graphics::plot(imager::as.cimg(array(img, dim=c(img_width, img_height, 1, 3))));
+  } else {
+    if(is.null(apply_palette)) {
+      warning("The wal instance contains no final image and none supplied in parameter 'apply_palette'. Using grayscale preview palette.");
+      apply_palette = cbind(0L:255L, 0L:255L, 0L:255L);
+    }
+    check.palette(apply_palette);
+    img = apply.palette.to.rawdata(raw_data, apply_palette, img_width , img_height);
+    graphics::plot(imager::as.cimg(array(img, dim=c(img_width, img_height, 1, 3))));
+  }
+
 }
 
 
