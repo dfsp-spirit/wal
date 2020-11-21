@@ -39,15 +39,17 @@ img.to.wal <- function(in_image, apply_palette = wal::pal_q2(), wal = wal.templa
     stop(sprintf("Input image has invalid height %d, must be a power of 2 (8, 16, 32, 64, ...).", wal$header$height));
   }
 
+  in_image = in_image * 255L; # convert data from range 0..1 to 0..255.
   in_image_matrix = matrix(in_image, c((wal$header$width * wal$header$height), 3L));
   palette_col_indices = closest.color.from.palette(in_image_matrix, apply_palette);
 
   wal$file_data_all_mipmaps = palette_col_indices;
+  wal$raw_data = wal$file_data_all_mipmaps[1:(wal$header$width * wal$header$height)];
 
   wal$header$mip_level_offsets = get.mipmap.data.offsets(wal$header$width, wal$header$height);
-
-
+  return(wal);
 }
+
 
 #' @title Compute length of mipmaps in bytes from width and height of largest image (mipmap0).
 #'
@@ -187,6 +189,12 @@ half.image <- function(image_data, byrow = TRUE) {
 #' @importFrom grDevices convertColor
 #' @export
 closest.color.from.palette <- function(colors_rgb, fixed_palette_rgb) {
+  if(max(colors_rgb) <= 1.0) {
+    warning("Parameters 'colors_rgb': max data value <= 1.0, is the data in range 0-255?");
+  }
+  if(max(fixed_palette_rgb) <= 1.0) {
+    warning("Parameters 'fixed_palette_rgb': max data value <= 1.0, is the data in range 0-255?");
+  }
   colors_lab = grDevices::convertColor(colors_rgb, from="sRGB", to="Lab");
   fixed_palette_lab = grDevices::convertColor(fixed_palette_rgb, from="sRGB", to="Lab");
   result_indices = rep(NA, nrow(colors_rgb));
