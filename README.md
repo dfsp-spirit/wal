@@ -7,6 +7,18 @@ The WAL file format is an old format for storing indexed bitmap images, used as 
 
 Note that whe WAL textures are stored inside Quake pak file archives (`pak0.pak`), so you will not see any WAL files in your Quake 2 directory unless you extracted them for mapping or modding.
 
+## Package features
+
+* Reading WAL format images, including all mipmap levels. By default, the largest version is used.
+* Visualization of WAL images in R, including all mipmap levels (requires a palette).
+* Export of WAL images to PNG and JPEG format files (requires a palette).
+* Two important palettes are included: the Q1 and Q2 palettes.
+* Writing of a WAL image instance to a new file in WAL format.
+* Converting other images (PNG, JPEG, whatever) to WAL instances and files, including:
+  * Mapping the colors of the source image to the most similar colors of the target WAL palette. This is done in LAB color space using DeltaE as the similarity measure.
+  * Generation of the mipmaps.
+
+
 ## Installation
 
 From your R session:
@@ -21,20 +33,21 @@ From your R session:
 
     wal_file = "~/path/to/q2_pak0_extracted/textures/e1u2/basic1_7.wal";
     wal = wal::read.wal(wal_file);
-    plot(wal, palette = wal::pal_q2());
+    
+    plot(wal);  # S3 plot method for 'wal' instances, uses preview palette. Alternatively:
+    wal::plotwal.mipmap(wal, mip_level = 1L, apply_palette = wal::pal_q2());  # Plot with full control.
 
 ### Exporting WAL textures to other formats
-
+    
     wal::wal.export.to.jpeg(wal, "~/mytex.jpg", palette = wal::pal_q1(), quality = 0.95);
     wal::wal.export.to.png(wal, "~/mytex.png");          # palette defaults to pal_q2().
     
-## Package features
+    
+### Convert a JPEG or PNG image to WAL format
 
-* Reading WAL format images, including all mipmap levels. By default, the largest version is used.
-* Visualization of WAL images in R, including all mipmap levels (requires a palette).
-* Export of WAL images to PNG and JPEG format files (requires a palette).
-* Two important palettes are included: the Q1 and Q2 palettes.
-* Writing of a WAL image instance to a new file in WAL format.
+    jpeg_file = "~/mytextures/bricks_256x256.jpg";
+    wal = img.to.wal(jpeg::readJPEG(jpeg_file));
+    wal::writeWAL("~/myfile.wal", wal);
 
 ## References
 
