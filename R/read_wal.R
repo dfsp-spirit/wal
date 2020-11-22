@@ -209,17 +209,20 @@ plotwal.mipmap <- function(wal, mip_level = 0L, apply_palette = wal::pal_q2()) {
     img_height = wal$header$height;
   } else if(mip_level == 1L) {
     img = wal$image_mip_level1;
-    raw_data = wal$raw_data_mip_level1;
+    #raw_data = wal$raw_data_mip_level1;
+    raw_data = get.wal.mipmap.data(wal, mip_level);
     img_width = wal$header$mipmaps$mip_level1_dim[1];
     img_height = wal$header$mipmaps$mip_level1_dim[2];
   } else if(mip_level == 2L) {
     img = wal$image_mip_level2;
-    raw_data = wal$raw_data_mip_level2;
+    #raw_data = wal$raw_data_mip_level2;
+    raw_data = get.wal.mipmap.data(wal, mip_level);
     img_width = wal$header$mipmaps$mip_level2_dim[1];
     img_height = wal$header$mipmaps$mip_level2_dim[2];
   } else { # 3
     img = wal$image_mip_level3;
-    raw_data = wal$raw_data_mip_level3;
+    #raw_data = wal$raw_data_mip_level3;
+    raw_data = get.wal.mipmap.data(wal, mip_level);
     img_width = wal$header$mipmaps$mip_level3_dim[1];
     img_height = wal$header$mipmaps$mip_level3_dim[2];
   }
@@ -237,6 +240,32 @@ plotwal.mipmap <- function(wal, mip_level = 0L, apply_palette = wal::pal_q2()) {
     graphics::plot(imager::as.cimg(array(img, dim=c(img_width, img_height, 1, 3))));
   }
 
+}
+
+
+#' @title Retrieve raw data for given mipmap level from WAL instance.
+#'
+#' @inheritParams plotwal.mipmap
+#'
+#' @keywords internal
+get.wal.mipmap.data <- function(wal, mip_level) {
+  mm_offset = get.mipmap.data.offsets(wal$header$width, wal$header$height, start_at = 0L);
+  mm_len = get.mipmap.data.lengths(wal$header$width, wal$header$height);
+  mm0 = wal$file_data_all_mipmaps[mm_offset[1]:mm_offset[2]];
+  mm1 = wal$file_data_all_mipmaps[mm_offset[2]:mm_offset[3]];
+  mm2 = wal$file_data_all_mipmaps[mm_offset[3]:mm_offset[3]]
+  mm3 = wal$file_data_all_mipmaps[mm_offset[3]:(mm_offset[3]+mm_len[4])];
+  if(mip_level == 0L) {
+    return(mm0);
+  } else if(mip_level == 1L) {
+    return(mm1);
+  } else if(mip_level == 2L) {
+    return(mm2);
+  } else if(mip_level == 3L) {
+    return(mm3);
+  } else {
+    stop("Invalid mip_level, must be 0..3.");
+  }
 }
 
 
