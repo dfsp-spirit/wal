@@ -43,7 +43,7 @@ img.to.wal <- function(in_image, apply_palette = wal::pal_q2(), wal = wal.templa
   in_image_matrix = matrix(in_image, c((wal$header$width * wal$header$height), 3L));
   palette_col_indices = closest.color.from.palette(in_image_matrix, apply_palette);
 
-  wal$file_data_all_mipmaps = palette_col_indices;
+  wal$file_data_all_mipmaps = expand.rawdata.to.mipmaps(palette_col_indices, wal$header$width, wal$header$height);
   wal$raw_data = wal$file_data_all_mipmaps[1:(wal$header$width * wal$header$height)];
 
   wal$header$mip_level_offsets = get.mipmap.data.offsets(wal$header$width, wal$header$height);

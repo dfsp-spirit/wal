@@ -7,6 +7,10 @@ testthat::test_that("We can convert a JPEG image to WAL.", {
 
   testthat::expect_equal(wal$header$height, 256L);
   testthat::expect_equal(wal$header$width, 256L);
+
+  expected_data_length_full = sum(wal:::get.mipmap.data.lengths(256L, 256L));
+  testthat::expect_equal(expected_data_length_full, length(wal$file_data_all_mipmaps));
+  testthat::expect_equal(length(wal$raw_data), (256*256));
 })
 
 
@@ -18,6 +22,10 @@ testthat::test_that("We can convert a PNG image to WAL.", {
 
   testthat::expect_equal(wal$header$height, 256L);
   testthat::expect_equal(wal$header$width, 256L);
+
+  expected_data_length_full = sum(wal:::get.mipmap.data.lengths(256L, 256L));
+  testthat::expect_equal(expected_data_length_full, length(wal$file_data_all_mipmaps));
+  testthat::expect_equal(length(wal$raw_data), (256*256));
 })
 
 
@@ -32,3 +40,6 @@ testthat::test_that("We can half a single-channel image", {
   small_red_channel = wal:::half.image(red_channel);
   testthat::expect_equal(dim(small_red_channel), c(128L, 128L));
 })
+
+
+
