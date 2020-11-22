@@ -1,0 +1,58 @@
+---
+title: "Reading and writing Quake WAL textures with wal"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Reading and writing Quake WAL textures with wal}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+In this document, we show how to read and write WAL textures, which are used by idtech1 and idtech2 games.
+
+
+## Reading WAL files
+
+If you only need the pixel data of a WAL file, try this:
+
+```{r}
+library("wal");
+wal_file = system.file("extdata", "bricks.wal", package = "wal", mustWork = TRUE);
+wal_image = wal::readWAL(wal_file);
+```
+
+The return value is an array with 3 dimensions, representing image width, height, and channels. It contains RGB color values in range 0..1:
+
+```{r}
+dim(wal_image);
+```
+
+
+To read the WAL file and get more detailed data, including the header and all mipmaps, read it into a wal instance instead:
+
+```{r}
+wal = wal::read.wal(wal_file);
+```
+
+This allows you to do more things, like converting to other formats and re-writing to other files. The wal instance is a named list, feel free to explore it. E.g., to see the header information, do this:
+
+```{r}
+wal$header$width;
+```
+
+### Preview a WAL texture in R
+
+If you loaded a wal instance, you can plot it:
+
+```{r}
+plot(wal);
+```
+
+And with more control:
+
+```{r}
+plotwal.mipmap(wal, apply_palette = wal::pal_q2(), mip_level = 1)
+```
+
+The mipmaps are 0..4, where 0 is the largest (highest quality) version.
+
+### Writing WAL images
