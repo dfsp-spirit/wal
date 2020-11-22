@@ -11,7 +11,7 @@ plotwal.mipmap(wal, mip_level = 0L, apply_palette = wal::pal_q2())
 
 \item{mip_level}{integer in range 0..3, the mipmap to plot. Level 0 is the original full-size image, the other ones get smaller and smaller (by factor 2 on each dimension, so 1/4th the size of their predecessor).}
 
-\item{apply_palette}{optional 256 x 3 integer matrix, the palette. Must contain values in range 0..255. Pass `ǸULL` if you do not want to apply any palette. The resulting \code{wal} object will not have an 'image' entry then.}
+\item{apply_palette}{optional 256 x 3 integer matrix, the palette. Must contain values in range 0..255. Pass NULL if you do not want to apply any palette. The resulting \code{wal} object will not have an 'image' entry then.}
 }
 \description{
 Plot a mipmap level from a WAL image.

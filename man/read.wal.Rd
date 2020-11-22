@@ -13,7 +13,7 @@ read.wal(filepath, hdr = TRUE, hdr_only = FALSE, apply_palette = wal::pal_q2())
 
 \item{hdr_only}{logical, whether to read only the header}
 
-\item{apply_palette}{optional 256 x 3 integer matrix, the palette. Must contain values in range 0..255. Pass `ǸULL` if you do not want to apply any palette. The resulting \code{wal} object will not have an 'image' entry then.}
+\item{apply_palette}{optional 256 x 3 integer matrix, the palette. Must contain values in range 0..255. Pass NULL if you do not want to apply any palette. The resulting \code{wal} object will not have an 'image' entry then.}
 }
 \value{
 integer pixel matrix, each pixel value is in range 0-255 and refers to an index in a palette. The palette is NOT included in the file, so you will need to define one or get it from elsewhere to see the final image.
