@@ -1,22 +1,16 @@
 
 
 testthat::test_that("We can read the Quake 2 Quad Damage base tex if available.", {
-  walf = '~/data/q2_pak/textures/e1u2/basic1_7.wal';
-  if( ! file.exists(walf)) {
-    testthat::skip("Quake 2 texture e1u2/basic1_7 available");
-  }
+  walf = system.file("extdata", "bricks.wal", package = "wal", mustWork = TRUE);
   wal = wal::read.wal(walf);
 
-  testthat::expect_equal(wal$header$tex_name, "e1u2/basic1_7");
+  testthat::expect_equal(wal$header$tex_name, "e1u1/black");
   testthat::expect_false(is.null(wal$image));
 })
 
 
 testthat::test_that("We can plot a WAL instance including mipmaps, and with custom palettes.", {
-  walf = '~/data/q2_pak/textures/e1u2/basic1_7.wal';
-  if( ! file.exists(walf)) {
-    testthat::skip("Quake 2 texture e1u2/basic1_7 available");
-  }
+  walf = system.file("extdata", "bricks.wal", package = "wal", mustWork = TRUE);
   wal = wal::read.wal(walf);
 
   plotwal.mipmap(wal, apply_palette = wal::pal_q2(), mip_level = 0);
