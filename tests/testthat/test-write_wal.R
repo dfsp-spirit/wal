@@ -1,11 +1,9 @@
+
 testthat::test_that("We can write and re-read a WAL texture if available.", {
-  walf = '~/data/q2_pak/textures/e1u2/basic1_7.wal';
-  if( ! file.exists(walf)) {
-    testthat::skip("Quake 2 texture e1u2/basic1_7 available");
-  }
+  walf = system.file("extdata", "bricks.wal", package = "wal", mustWork = TRUE);
   wal = wal::read.wal(walf);
 
-  testthat::expect_equal(wal$header$tex_name, "e1u2/basic1_7");
+  testthat::expect_equal(wal$header$tex_name, "e1u1/black");
 
   walf_written = tempfile(fileext = ".wal");
   writeWAL(walf_written, wal);
