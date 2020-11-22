@@ -55,4 +55,39 @@ plotwal.mipmap(wal, apply_palette = wal::pal_q2(), mip_level = 1)
 
 The mipmaps are 0..4, where 0 is the largest (highest quality) version.
 
-### Writing WAL images
+
+### Writing WAL image files
+
+You can write a WAL instance to a file like this:
+
+```{r, eval = FALSE}
+writeWAL("~/mytexture.wal", wal);
+```
+
+
+### Exporting to PNG and JPEG
+
+Exporting a WAL instance to JPEG or PNG format is straightforward:
+
+```{r, eval = FALSE}
+wal.export.to.jpeg(wal, "~/mytexture.jpg");
+wal.export.to.png(wal, "~/mytexture.png");
+```
+
+### Converting JPG or PNG images to WAL format
+
+This way is tricky for several reasons: WAL files must have certain dimensions and they use a fixed palette with 256 colors. This means that if you convert a JPG or PNG image, which can have 16 million different colors, to a file to WAL format, it will look different (unless, by coincidence, the image only consists of colors which occur in the palette). During the conversion, each color in the source image is replaced with the most similar color from the palette. Of course, different input colors may be mapped to the same palette color, so the quality will be worse. How much worse depends on how well the palette fits the source image.
+
+That all being said, if you have input files in PNG or JPEG format, you can covert them to WAL like this:
+
+```{r, eval = FALSE}
+wal_imported = img.to.wal(png::readPNG("~/mytexture.png"));
+writeWAL("~/mytexture.wal", wal_imported);
+
+wal_imported = img.to.wal(jpeg::readJPEG("~/mytexture.jpg"));
+writeWAL("~/mytexture.wal", wal_imported);
+```
+
+The widths and heights of the input files must be a power of 2, typical values are 16, 32, 64, 128, 256, and 512. The width and height for a single file can differ. So 32x256 and 64x64 are fine, but 50x50 is not. 
+When importing PNGs, also keep in mind that WAL does not support the alpha channel.
+
