@@ -202,31 +202,21 @@ plotwal.mipmap <- function(wal, mip_level = 0L, apply_palette = wal::pal_q2()) {
   if(mip_level < 0L | mip_level > 3L) {
     stop("Paramter 'mip_level' must be an integer in range 0..3.");
   }
+
+  raw_data = get.wal.mipmap.data(wal, mip_level);
+  img_width = get.wal.mipmap.widths(wal$header$width)[mip_level+1L];
+  img_height = get.wal.mipmap.heights(wal$header$height)[mip_level+1L];
+
   if(mip_level == 0L) {
     img = wal$image;
-    raw_data = wal$raw_data;
-    img_width = wal$header$width;
-    img_height = wal$header$height;
   } else if(mip_level == 1L) {
     img = wal$image_mip_level1;
-    #raw_data = wal$raw_data_mip_level1;
-    raw_data = get.wal.mipmap.data(wal, mip_level);
-    img_width = wal$header$mipmaps$mip_level1_dim[1];
-    img_height = wal$header$mipmaps$mip_level1_dim[2];
   } else if(mip_level == 2L) {
     img = wal$image_mip_level2;
-    #raw_data = wal$raw_data_mip_level2;
-    raw_data = get.wal.mipmap.data(wal, mip_level);
-    img_width = wal$header$mipmaps$mip_level2_dim[1];
-    img_height = wal$header$mipmaps$mip_level2_dim[2];
   } else { # 3
     img = wal$image_mip_level3;
-    #raw_data = wal$raw_data_mip_level3;
-    raw_data = get.wal.mipmap.data(wal, mip_level);
-    img_width = wal$header$mipmaps$mip_level3_dim[1];
-    img_height = wal$header$mipmaps$mip_level3_dim[2];
   }
-
+  img = NULL;
 
   if(! is.null(img)) {
     graphics::plot(imager::as.cimg(array(img, dim=c(img_width, img_height, 1, 3))));
@@ -242,7 +232,6 @@ plotwal.mipmap <- function(wal, mip_level = 0L, apply_palette = wal::pal_q2()) {
 
 }
 
-
 #' @title Retrieve raw data for given mipmap level from WAL instance.
 #'
 #' @inheritParams plotwal.mipmap
@@ -253,8 +242,8 @@ get.wal.mipmap.data <- function(wal, mip_level) {
   mm_len = get.mipmap.data.lengths(wal$header$width, wal$header$height);
   mm0 = wal$file_data_all_mipmaps[mm_offset[1]:mm_offset[2]];
   mm1 = wal$file_data_all_mipmaps[mm_offset[2]:mm_offset[3]];
-  mm2 = wal$file_data_all_mipmaps[mm_offset[3]:mm_offset[3]]
-  mm3 = wal$file_data_all_mipmaps[mm_offset[3]:(mm_offset[3]+mm_len[4])];
+  mm2 = wal$file_data_all_mipmaps[mm_offset[3]:mm_offset[4]]
+  mm3 = wal$file_data_all_mipmaps[mm_offset[4]:(mm_offset[4]+mm_len[4])];
   if(mip_level == 0L) {
     return(mm0);
   } else if(mip_level == 1L) {
@@ -269,4 +258,13 @@ get.wal.mipmap.data <- function(wal, mip_level) {
 }
 
 
+#' @keywords internal
+get.wal.mipmap.widths <- function(width_mm0) {
+  return(c(width_mm0, width_mm0/2, width_mm0/4, width_mm0/8));
+}
+
+#' @keywords internal
+get.wal.mipmap.heights <- function(height_mm0) {
+  return(get.wal.mipmap.widths(height_mm0));
+}
 
