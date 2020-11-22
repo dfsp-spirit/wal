@@ -1,11 +1,21 @@
 
 
-testthat::test_that("We can read the Quake 2 Quad Damage base tex if available.", {
+testthat::test_that("We can read a WAL texture.", {
   walf = system.file("extdata", "bricks.wal", package = "wal", mustWork = TRUE);
   wal = wal::read.wal(walf);
 
   testthat::expect_equal(wal$header$tex_name, "e1u1/black");
   testthat::expect_false(is.null(wal$image));
+  testthat::expect_true(max(wal$image) > 2L); # data range 0..255
+})
+
+
+testthat::test_that("We can read a WAL texture with readWAL.", {
+  walf = system.file("extdata", "bricks.wal", package = "wal", mustWork = TRUE);
+  wal_image = wal::readWAL(walf);
+
+  testthat::expect_true(is.array(wal_image));
+  testthat::expect_true(max(wal_image) <= 1.0); # data range 0..1
 })
 
 

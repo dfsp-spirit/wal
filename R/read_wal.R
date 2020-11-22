@@ -1,8 +1,5 @@
 
 
-# rgb(pal_q2[c(1,3,5,7),]/255)
-# pal_q2[c(1,3,5,7),]/255
-
 #' @title Read bitmap file in WAL format.
 #'
 #' @param filepath character string, path to the file including extension
@@ -115,6 +112,22 @@ read.wal <- function(filepath, hdr = TRUE, hdr_only = FALSE, apply_palette = wal
     }
     return(wal$image);
   }
+}
+
+
+#' @title Read bitmap image in WAL format, returning image data only.
+#'
+#' @description Read a bitmap image in WAL format, and return data in the same format as \code{png::readPNG} and \code{jpeg::readJPEG} do.
+#'
+#' @inheritParams read.wal
+#'
+#' @seealso \code{read.wal} if you want to read the header and have more control.
+#'
+#' @return numeric matrix with dimension width x height x channels, with all color values in range 0..1.
+#'
+#' @export
+readWAL <- function(filepath, apply_palette = wal::pal_q2()) {
+  return(read.wal(filepath, hdr = FALSE, hdr_only = FALSE, apply_palette = apply_palette) / 255.);
 }
 
 
