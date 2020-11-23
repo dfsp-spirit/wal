@@ -1,5 +1,5 @@
 # wal
-Read bitmap images in WAL file format in R.
+Read, write, create and export bitmap images in WAL file format in R.
 
 ![Vis](./vignettes/Bricks050_256_Color.jpg?raw=true "Example Game texture.")
 
