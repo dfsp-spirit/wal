@@ -52,6 +52,8 @@ From your R session:
     wal = img.to.wal(jpeg::readJPEG(jpeg_file));
     wal::writeWAL("~/myfile.wal", wal);
 
+For more information, read the great vignette that comes with the package.
+
 ## References
 
 Documentation on the WAL format seems sparse. I did not find any official spec so I used the Quake 2 source code to learn about the format. Relevant files are:
