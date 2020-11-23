@@ -18,3 +18,11 @@ wal.export.to.jpeg(wal, filepath, apply_palette = wal::pal_q2(), ...)
 \description{
 Export wal instance to JPEG format image file.
 }
+\examples{
+\dontrun{
+   walf = '~/data/q2_pak0_extracted/textures/e1u2/basic1_7.wal';
+   wal = read.wal(walf);
+   wal.export.to.jpeg(wal, "~/basic1_7.jpg");
+}
+
+}

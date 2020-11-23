@@ -12,3 +12,8 @@ pal_q2()
 \description{
 Get Q2 palette.
 }
+\examples{
+   pal = pal_q2();
+   dim(pal);
+
+}

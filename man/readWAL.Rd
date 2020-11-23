@@ -17,6 +17,14 @@ numeric matrix with dimension width x height x channels, with all color values i
 \description{
 Read a bitmap image in WAL format, and return data in the same format as \code{png::readPNG} and \code{jpeg::readJPEG} do.
 }
+\examples{
+\dontrun{
+   walf = '~/data/q2_pak0_extracted/textures/e1u2/basic1_7.wal';
+   wal_image = readWAL(walf);
+   dim(wal_image);
+}
+
+}
 \seealso{
 \code{read.wal} if you want to read the header and have more control.
 }

@@ -9,6 +9,13 @@
 #'
 #' @inheritParams read.wal
 #'
+#' @examples
+#' \dontrun{
+#'    walf = '~/data/q2_pak0_extracted/textures/e1u2/basic1_7.wal';
+#'    wal = read.wal(walf);
+#'    wal.export.to.jpeg(wal, "~/basic1_7.jpg");
+#' }
+#'
 #' @importFrom jpeg writeJPEG
 #' @importFrom freesurferformats rotate3D flip3D
 #' @export
@@ -40,6 +47,14 @@ wal.export.to.jpeg <- function(wal, filepath, apply_palette = wal::pal_q2(), ...
 #' @param ... extra parameters passed to \code{png::writePNG}.
 #'
 #' @inheritParams read.wal
+#'
+#' @examples
+#' \dontrun{
+#'    walf = '~/data/q2_pak0_extracted/textures/e1u2/basic1_7.wal';
+#'    wal = read.wal(walf);
+#'    wal.export.to.png(wal, "~/basic1_7.png");
+#' }
+
 #'
 #' @importFrom png writePNG
 #' @importFrom freesurferformats rotate3D flip3D

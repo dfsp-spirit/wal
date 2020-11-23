@@ -3,6 +3,10 @@
 #'
 #' @return 256 x 3 integer matrix, representing the RGB color values for an index into the palette.
 #'
+#' @examples
+#'    pal = pal_q2();
+#'    dim(pal);
+#'
 #' @export
 pal_q2 <- function() {
   q2pal = structure(c(0L, 15L, 31L, 47L, 63L, 75L, 91L, 107L, 123L, 139L,
@@ -76,6 +80,10 @@ pal_q2 <- function() {
 #' @title Get Q1 palette.
 #'
 #' @return 256 x 3 integer matrix, representing the RGB color values for an index into the palette.
+#'
+#' @examples
+#'    pal = pal_q1();
+#'    dim(pal);
 #'
 #' @export
 pal_q1 <- function() {

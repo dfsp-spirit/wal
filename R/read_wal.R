@@ -125,6 +125,13 @@ read.wal <- function(filepath, hdr = TRUE, hdr_only = FALSE, apply_palette = wal
 #'
 #' @return numeric matrix with dimension width x height x channels, with all color values in range 0..1.
 #'
+#' @examples
+#' \dontrun{
+#'    walf = '~/data/q2_pak0_extracted/textures/e1u2/basic1_7.wal';
+#'    wal_image = readWAL(walf);
+#'    dim(wal_image);
+#' }
+#'
 #' @export
 readWAL <- function(filepath, apply_palette = wal::pal_q2()) {
   return(read.wal(filepath, hdr = FALSE, hdr_only = FALSE, apply_palette = apply_palette) / 255.);
@@ -210,6 +217,13 @@ plot.wal <- function(x, ...) {
 #'
 #' @inheritParams read.wal
 #'
+#' @examples
+#' \dontrun{
+#'    walf = '~/data/q2_pak0_extracted/textures/e1u2/basic1_7.wal';
+#'    wal = read.wal(walf);
+#'    plotwal.mipmap(wal, mip_level = 3);
+#' }
+#'
 #' @export
 plotwal.mipmap <- function(wal, mip_level = 0L, apply_palette = wal::pal_q2()) {
   if(mip_level < 0L | mip_level > 3L) {
@@ -271,11 +285,23 @@ get.wal.mipmap.data <- function(wal, mip_level) {
 }
 
 
+#' @title Compute widths of the 4 mipimap levels from base width.
+#'
+#' @param width_mm integer, the base mipmap width.
+#'
+#' @return integer vector of length 4, the mipmap widths.
 #' @keywords internal
 get.wal.mipmap.widths <- function(width_mm0) {
   return(c(width_mm0, width_mm0/2, width_mm0/4, width_mm0/8));
 }
 
+
+#' @title Compute widths of the 4 mipimap levels from base width.
+#'
+#' @param height_mm interger, the base mipmap height.
+#'
+#' @return integer vector of length 4, the mipmap heights.
+#'
 #' @keywords internal
 get.wal.mipmap.heights <- function(height_mm0) {
   return(get.wal.mipmap.widths(height_mm0));

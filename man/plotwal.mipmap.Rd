@@ -16,3 +16,11 @@ plotwal.mipmap(wal, mip_level = 0L, apply_palette = wal::pal_q2())
 \description{
 Plot a mipmap level from a WAL image.
 }
+\examples{
+\dontrun{
+   walf = '~/data/q2_pak0_extracted/textures/e1u2/basic1_7.wal';
+   wal = read.wal(walf);
+   plotwal.mipmap(wal, mip_level = 3);
+}
+
+}
