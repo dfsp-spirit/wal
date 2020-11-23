@@ -7,7 +7,7 @@ vignette: >
   \usepackage[utf8]{inputenc}
 ---
 
-In this document, we show how to read and write WAL textures, which are used by idtech1 and idtech2 games.
+In this document, we show how to read, write, import and export WAL textures, which are used by idtech1 and idtech2 games.
 
 
 ## Reading WAL files
@@ -47,14 +47,23 @@ If you loaded a wal instance, you can plot it:
 plot(wal);
 ```
 
-And with more control:
+This plots the largest mip level with the Quake 2 palette. If you need more control, e.g., you want to plot a different mip level or use a certain palette, use plotwal.mipmap instead:
 
 ```{r}
 plotwal.mipmap(wal, apply_palette = wal::pal_q2(), mip_level = 1)
 ```
 
-The mipmaps are 0..4, where 0 is the largest (highest quality) version.
+The mipmaps are 0..3, where 0 is the largest (highest quality) version. Let's look at the lowest quality version with the Q1 palette:
 
+```{r}
+plotwal.mipmap(wal, apply_palette = wal::pal_q1(), mip_level = 3)
+```
+
+As you can see, the Q1 palette fits this particular image worse than the Q2 palette:
+
+```{r}
+plotwal.mipmap(wal, apply_palette = wal::pal_q2(), mip_level = 3)
+```
 
 ### Writing WAL image files
 
@@ -88,6 +97,5 @@ wal_imported = img.to.wal(jpeg::readJPEG("~/mytexture.jpg"));
 writeWAL("~/mytexture.wal", wal_imported);
 ```
 
-The widths and heights of the input files must be a power of 2, typical values are 16, 32, 64, 128, 256, and 512. The width and height for a single file can differ. So 32x256 and 64x64 are fine, but 50x50 is not. 
-When importing PNGs, also keep in mind that WAL does not support the alpha channel.
+The widths and heights of the input files must be a power of 2. Typical values used in the games are 16, 32, 64, 128, 256, and 512. The width and height for a single file be different. So 32x256 and 64x64 are fine, but 50x50 is not. When importing PNGs, also keep in mind that WAL does not support the alpha channel.
 
