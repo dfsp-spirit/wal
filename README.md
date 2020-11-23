@@ -1,6 +1,8 @@
 # wal
 Read bitmap images in WAL file format in R.
 
+![Vis](./vignettes/Bricks050_256_Color.jpg?raw=true "Example Game texture.")
+
 ## About
 
 The WAL file format is an old format for storing indexed bitmap images, used as textures in idtech1 and idtech2 games. A single WAL file contains four [mipmaps](https://en.wikipedia.org/wiki/Mipmap) of the same image. WAL format files are indexed but do **not** contain the palette needed to reconstruct the image. You can use your own palette, or use the Q1 or Q2 palettes that come with this package.
