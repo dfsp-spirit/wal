@@ -18,6 +18,12 @@ plot(wal);
 ## -----------------------------------------------------------------------------
 plotwal.mipmap(wal, apply_palette = wal::pal_q2(), mip_level = 1)
 
+## -----------------------------------------------------------------------------
+plotwal.mipmap(wal, apply_palette = wal::pal_q1(), mip_level = 3)
+
+## -----------------------------------------------------------------------------
+plotwal.mipmap(wal, apply_palette = wal::pal_q2(), mip_level = 3)
+
 ## ---- eval = FALSE------------------------------------------------------------
 #  writeWAL("~/mytexture.wal", wal);
 
