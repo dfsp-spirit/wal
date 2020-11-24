@@ -7,10 +7,10 @@
 wad.contents(wad)
 }
 \arguments{
-\item{wad}{a wad instance, see \code{read.wad}}
+\item{wad}{a wad instance, see \code{read.wad}. Alternatively  a character string, which will be interpreted as a filepath to a WAD file that should be loaded.}
 }
 \value{
-data.frame, the files inside the wad.
+data.frame, info on the files inside the wad.
 }
 \description{
 List WAD file contents.
