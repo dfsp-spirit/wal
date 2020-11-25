@@ -110,8 +110,11 @@ save.filepart <- function(infile, read_from, read_len, outfile) {
   read_len = as.integer(read_len);
   if(read_len < 0L) { stop("Invalid read_len parameter."); }
 
+  #cat(sprintf("Writing %d bytes starting at %d to new file %s.\n", read_len, read_from, outfile))
+
   seek(fh, where = read_from, origin = "start");
   raw_data = readBin(fh, raw(), n = read_len, size = 1L, endian = endian);
+  close(fh);
 
   if(length(raw_data) != read_len) {
     warning(sprintf("Extracted filepart length mismatch: expected %d, read %d.\n", read_len, length(raw_data)));
@@ -172,10 +175,14 @@ wad.contents <- function(wad) {
 #' @export
 wad.extract <- function(wad_filepath, outdir = getwd()) {
   wad = read.wad(wad_filepath);
-  for(row_idx in 1:nrow(wad$dir_entries)) {
-    out_filename_cleaned = wad.texname.clean(wad$dir_entries$dir_name[row_idx]);
-    out_filepath = file.path(outdir, out_filename_cleaned);
-    save.filepart(wad_filepath, wad$dir_entries$offset[row_idx], wad$dir_entries$dsize[row_idx], out_filepath);
+  if(nrow(wad$dir_entries) > 0L) {
+    for(row_idx in 1:nrow(wad$dir_entries)) {
+      out_filename_cleaned = wad.texname.clean(wad$dir_entries$dir_name[row_idx]);
+      out_filepath = file.path(outdir, out_filename_cleaned);
+      save.filepart(wad_filepath, wad$dir_entries$offset[row_idx], wad$dir_entries$dsize[row_idx], out_filepath);
+    }
+  } else {
+    warning("Empty WAD file.");
   }
 }
 
