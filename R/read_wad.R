@@ -54,7 +54,7 @@ read.wad <- function(filepath) {
 
   wadentry_type_string = get.wadentry.type.strings(wadentry_type);
 
-  wad_dir_entries = data.frame("offset" = wadentry_offset, "dsize" = wadentry_dsize, "size" = wadentry_size, "type" = wadentry_type, "type_string" = wadentry_type_string, "compression" = wadentry_compression, "dummy" = wadentry_dummy, "dir_name" = wadentry_dir_name);
+  wad_dir_entries = data.frame("offset" = wadentry_offset, "dsize" = wadentry_dsize, "size" = wadentry_size, "type" = wadentry_type, "type_string" = wadentry_type_string, "compression" = wadentry_compression, "dummy" = wadentry_dummy, "dir_name" = wadentry_dir_name, stringsAsFactors = FALSE);
   wad$dir_entries = wad_dir_entries;
 
   class(wad) = c(class(wad), "wad");
@@ -88,6 +88,56 @@ wad_dir.types.int <- function() {
   return(c(64L, 66L, 68L, 69L));
 }
 
+
+#' @title Read part of binary file and save as new file.
+#'
+#' @param infile for input file, part of it gets read.
+#'
+#' @param read_from integer, index at which to start reading, from start of file. Used to \code{seek} to the position.
+#'
+#' @param read_len integer, the number of bytes to read.
+#'
+#' @param outfile character string, the output filename.
+#'
+#' @keywords internal
+save.filepart <- function(infile, read_from, read_len, outfile) {
+  fh = file(infile, "rb");
+  on.exit({ close(fh) });
+  endian = "little";
+
+  read_from = as.integer(read_from);
+  if(read_from < 0L) { stop("Invalid read_from parameter."); }
+  read_len = as.integer(read_len);
+  if(read_len < 0L) { stop("Invalid read_len parameter."); }
+
+  seek(fh, where = read_from, origin = "start");
+  raw_data = readBin(fh, raw(), n = read_len, size = 1L, endian = endian);
+
+  if(length(raw_data) != read_len) {
+    warning(sprintf("Extracted filepart length mismatch: expected %d, read %d.\n", read_len, length(raw_data)));
+  }
+
+  fh_out = file(outfile, "wb");
+  on.exit({ close(fh_out) });
+  writeBin(raw_data, fh_out);
+  flush(fh_out);
+}
+
+
+#' @title S3 print function for WAD
+#'
+#' @param x wad instance
+#'
+#' @export
+print.wad <- function(x, ...) {
+  num_palettes = length(which(x$dir_entries$type == 64L));
+  num_pic_statbar = length(which(x$dir_entries$type == 66L));
+  num_tex = length(which(x$dir_entries$type == 68L));
+  num_pic_console = length(which(x$dir_entries$type == 69L));
+  cat(sprintf("WAD file holding %d palettes, %d statbar pics, %d textures and %d console pics.\n", num_palettes, num_pic_statbar, num_tex, num_pic_console));
+}
+
+
 #' @title Get strings describing WAD dir entry types.
 #'
 #' @keywords internal
@@ -108,6 +158,37 @@ wad.contents <- function(wad) {
   if(is.character(wad)) {
     wad = read.wad(wad);
   }
-  contents = data.frame("type" = wad$dir_entries$type_string, "name" = wad$dir_entries$dir_name, "size" = wad$dir_entries$size);
+  contents = data.frame("type" = wad$dir_entries$type_string, "name" = wad$dir_entries$dir_name, "size" = wad$dir_entries$size, stringsAsFactors = FALSE);
   return(contents);
+}
+
+
+#' @title Extract WAD contents into existing directory.
+#'
+#' @param wad_filepath character string, path to input WAD file.
+#'
+#' @param outdir character string, the output directory in which the files should be created. The filenames are derived from the data in the WAD.
+#'
+#' @export
+wad.extract <- function(wad_filepath, outdir = getwd()) {
+  wad = read.wad(wad_filepath);
+  for(row_idx in 1:nrow(wad$dir_entries)) {
+    out_filename_cleaned = wad.texname.clean(wad$dir_entries$dir_name[row_idx]);
+    out_filepath = file.path(outdir, out_filename_cleaned);
+    save.filepart(wad_filepath, wad$dir_entries$offset[row_idx], wad$dir_entries$dsize[row_idx], out_filepath);
+  }
+}
+
+
+#' @title Replace special chars in texture names to turn it into a valid filename.
+#'
+#' @param texnames character string, texture names from a WAD file. The textures may contain the special characters '*' and '+', which are used to indicate sequences (textures that change on an event, like a pressed button turning from red to green) and other things.
+#'
+#' @return character strings usable as filenames.
+#'
+#' @keywords internal
+wad.texname.clean <- function(texnames) {
+  texnames = gsub("\\*", "s_", texnames);
+  texnames = gsub("\\+", "p_", texnames);
+  return(texnames);
 }
