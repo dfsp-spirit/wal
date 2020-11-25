@@ -24,7 +24,12 @@ Note that whe WAL textures are stored inside Quake pak file archives (`baseq2/pa
 
 ## Installation
 
-From your R session:
+I recommend to install the [stable wal version from CRAN](https://cran.r-project.org/package=wal):
+
+    install.packages("wal");
+
+
+To install the development version (no complaints or bug reports, please):
 
     install.packages("devtools");
     devtools::install_github('dfsp-spirit/wal')
