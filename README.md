@@ -1,5 +1,5 @@
 # wal
-Read, write, create and export bitmap images in WAL file format in R.
+Read, write, create and export bitmap images in WAL file format in R. Useful for messing with Quake and Quake II game textures.
 
 ![Vis](./vignettes/Bricks050_256_Color.jpg?raw=true "Example Game texture.")
 
@@ -7,10 +7,12 @@ Read, write, create and export bitmap images in WAL file format in R.
 
 The WAL file format is an old format for storing indexed bitmap images, used as textures in idtech1 and idtech2 games. A single WAL file contains four [mipmaps](https://en.wikipedia.org/wiki/Mipmap) of the same image. WAL format files are indexed but do **not** contain the palette needed to reconstruct the image. You can use your own palette, or use the Q1 or Q2 palettes that come with this package.
 
-Note that whe WAL textures are stored inside Quake pak file archives (`baseq2/pak0.pak`), so you will not see any WAL files in your Quake 2 directory unless you extracted them for mapping or modding. For Quake I, they are stored directly in the BSP level files (which are inside `Id1/PAK0.PAK`), or in WAD files.
+Note that whe WAL textures are stored inside Quake pak file archives (`baseq2/pak0.pak`), so you will not see any WAL files in your Quake 2 directory unless you extracted them for mapping or modding. For Quake I, textures in a very similar format that is also supported are stored directly in the BSP level files (which are inside `Id1/PAK0.PAK`), or in WAD files.
 
 
 ## Package features
+
+Managing WAL images:
 
 * Reading WAL format images, including all mipmap levels. By default, the largest version is used.
 * Visualization of WAL images in R, including all mipmap levels (requires a palette).
@@ -20,6 +22,13 @@ Note that whe WAL textures are stored inside Quake pak file archives (`baseq2/pa
 * Converting other images (PNG, JPEG, whatever) to WAL instances and files, including:
   * Mapping the colors of the source image to the most similar colors of the target WAL palette. This is done in LAB color space using DeltaE as the similarity measure.
   * Generation of the mipmaps.
+
+Related Formats and Features:
+
+* Reading WAD files in the 'WAD2' archive format used by Quake I and related games. These are tar-like archive files that hold collections of Quake assets (colormaps, textures in Q1 Mipmap Texture format, console pics, ...). Note that some games like Daikatana use a similar, but not identical format and still name their archives WAD files. These other WAD-like formats are currently not supported. Please open an issue if you need support for them.
+* Extracting WAD archives to a directory.
+* Reading, visualizing, and exporting Q1 Mipmap format textures. These are the textures used by Quake I, and they are typically stored directly in the binary maps (BSP files) or in WAD texture archives (see above). The Q1 Mipmap Texture format is very similar to the Quake II WAL format.
+
 
 
 ## Installation
