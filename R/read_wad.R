@@ -172,6 +172,8 @@ wad.contents <- function(wad) {
 #'
 #' @param outdir character string, the output directory in which the files should be created. The filenames are derived from the data in the WAD.
 #'
+#' @note One can read extracted textures with \code{read.quake1miptex()}.
+#'
 #' @export
 wad.extract <- function(wad_filepath, outdir = getwd()) {
   wad = read.wad(wad_filepath);
@@ -198,4 +200,41 @@ wad.texname.clean <- function(texnames) {
   texnames = gsub("\\*", "s_", texnames);
   texnames = gsub("\\+", "p_", texnames);
   return(texnames);
+}
+
+
+#' @title Read a Quake mipmap texture from a WAD2 file.
+#'
+#' @param filepath character string, path to WAD file.
+#'
+#' @param at_offset integer, the index in the WAD file where the texture starts.
+#'
+#' @return a 'qmiptex' instance, its like a wall with shorter name field (16 instead of 32) and some fields (anim_name, flags, contents, value) missing.
+#'
+#' @export
+read.quake1miptex <- function(filepath, at_offset = 0L) {
+  fh = file(filepath, "rb");
+  on.exit({ close(fh) });
+  endian = "little";
+
+  seek(fh, where = at_offset, origin = "start");
+  qtex = list('header' = list());
+  class(qtex) = c(class(qtex), 'qmiptex', 'wal');
+
+  num_mip_levels = 4L;
+
+  qtex$header$name = readChar(fh, 16L);
+  qtex$header$width = readBin(fh, integer(), n = 1, size = 4, endian = endian);
+  qtex$header$height = readBin(fh, integer(), n = 1, size = 4, endian = endian);
+  qtex$header$mip_level_offsets = readBin(fh, integer(), n = num_mip_levels, size = 4, endian = endian);
+
+  if(qtex$header$width <= 0L | qtex$header$height <= 0L) {
+    stop("Invalid mipmap texture image dimensions");
+  }
+
+  data_length_all_mipmaps = sum(get.mipmap.data.lengths(qtex$header$width, qtex$header$height));
+  pixel_data = readBin(fh, integer(), n = data_length_all_mipmaps, size = 1L, signed = FALSE, endian = endian);
+  qtex$file_data_all_mipmaps = pixel_data + 1L;
+  qtex$raw_data = get.wal.mipmap.data(qtex, mip_level = 0L);
+  return(qtex);
 }

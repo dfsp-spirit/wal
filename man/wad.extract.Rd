@@ -14,3 +14,6 @@ wad.extract(wad_filepath, outdir = getwd())
 \description{
 Extract WAD contents into existing directory.
 }
+\note{
+One can read extracted textures with \code{read.quake1miptex()}.
+}
