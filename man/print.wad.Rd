@@ -8,6 +8,8 @@
 }
 \arguments{
 \item{x}{wad instance}
+
+\item{...}{extra arguments, ignored}
 }
 \description{
 S3 print function for WAD

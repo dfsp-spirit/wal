@@ -17,3 +17,10 @@ a 'qmiptex' instance, its like a wall with shorter name field (16 instead of 32)
 \description{
 Read a Quake mipmap texture from a WAD2 file.
 }
+\examples{
+\dontrun{
+    qm = read.quake1miptex("~/knave.wad", at_offset = 1317632);
+    plotwal.mipmap(qm, apply_palette = pal_q1());
+}
+
+}

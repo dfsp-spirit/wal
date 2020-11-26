@@ -131,6 +131,8 @@ save.filepart <- function(infile, read_from, read_len, outfile) {
 #'
 #' @param x wad instance
 #'
+#' @param ... extra arguments, ignored
+#'
 #' @export
 print.wad <- function(x, ...) {
   num_palettes = length(which(x$dir_entries$type == 64L));
@@ -210,6 +212,12 @@ wad.texname.clean <- function(texnames) {
 #' @param at_offset integer, the index in the WAD file where the texture starts.
 #'
 #' @return a 'qmiptex' instance, its like a wall with shorter name field (16 instead of 32) and some fields (anim_name, flags, contents, value) missing.
+#'
+#' @examples
+#' \dontrun{
+#'     qm = read.quake1miptex("~/knave.wad", at_offset = 1317632);
+#'     plotwal.mipmap(qm, apply_palette = pal_q1());
+#' }
 #'
 #' @export
 read.quake1miptex <- function(filepath, at_offset = 0L) {
