@@ -3,7 +3,7 @@
 #'
 #' @description Convert an input RGB image to a WAL instance, re-mapping its colors to the WAL palette in the process and generating the mipmaps.
 #'
-#' @param in_image numeric matrix with 3 dimensions: widt, height, channels. Values must be in range 0..1. This is the image format returned by \code{jpeg::readJPEG} and \code{png::readPNG}. The image can have arbitrary colors, but the colors in the final WAL image will be limited to the palette. Both the width and height must be powers of 2 (>= 8) typical idtech1/2 textures use 32, 64, ..., 512. The reason is the mipmaps.
+#' @param in_image numeric matrix with 3 dimensions: widt, height, channels. Values must be in range 0..1. This is the image format returned by \code{jpeg::readJPEG} and \code{png::readPNG}. The image can have arbitrary colors, but the colors in the final WAL image will be limited to the palette. Both the width and height must be multiples of 8. Typical idtech1/2 textures use 32, 64, ..., 512. The reason is the mipmaps.
 #'
 #' @param apply_palette n x 3 integer matrix, the palette for the WAL image. This is not saved to the wal image, but still required because the colors from the \code{in_image} will be adapted to the palette colors (replaced with the most similar ones). If the palette does not cover the colors in the source image well, the resulting WAL image will look bad (dissimilar to the source image).
 #'
@@ -31,12 +31,11 @@ img.to.wal <- function(in_image, apply_palette = wal::pal_q2(), wal = wal.templa
   if(num_channels != 3L) {
     stop("Parameter 'in_image': third dimension must have length 3 (channels R, G, B).");
   }
-  supported_tex_sizes = c(8L, 16L, 32L, 64L, 128L, 256L, 512L, 1024L, 2048L, 4096L, 8192L, 16384L);
-  if( ! wal$header$width %in% supported_tex_sizes) {
-    stop(sprintf("Input image has invalid width %d, must be a power of 2 (8, 16, 32, 64, ...).", wal$header$width));
+  if(wal$header$width %% 8 != 0L) {
+    stop(sprintf("Input image has invalid width %d, must be a multiple of 8.", wal$header$width));
   }
-  if( ! wal$header$height %in% supported_tex_sizes) {
-    stop(sprintf("Input image has invalid height %d, must be a power of 2 (8, 16, 32, 64, ...).", wal$header$height));
+  if(wal$header$height %% 8 != 0L) {
+    stop(sprintf("Input image has invalid height %d, must be a multiple of 8.", wal$header$height));
   }
 
   in_image = in_image * 255L; # convert data from range 0..1 to 0..255.
