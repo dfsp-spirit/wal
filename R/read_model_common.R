@@ -31,7 +31,7 @@ quakemodel.to.fs.surface <- function(quakemodel, frame_idx = 1L) {
 #' #'
 #' #' @param frame_idx integer, the frame to export. Quake models may contain animations made up of several frames. The mesh connectivity is unaltered between frames, but the vertex positions differ.
 #' #'
-#' #' @return \code{tmesh3d} mesh instance, as used by the \code{rgl} package. You can use \code{rgl::rgl.shade3d(your_tmesh3d_instance)} to visualize the model.
+#' #' @return \code{tmesh3d} mesh instance, as used by the \code{rgl} package. You can use \code{rgl::shade3d(your_tmesh3d_instance)} to visualize the model.
 #' #'
 #' #' @export
 #' quakemodel.to.tmesh3d <- function(quakemodel, frame_idx = 1L) {
@@ -40,3 +40,4 @@ quakemodel.to.fs.surface <- function(quakemodel, frame_idx = 1L) {
 #'   return(tm);
 #' }
 #'
+

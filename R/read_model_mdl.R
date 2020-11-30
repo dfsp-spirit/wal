@@ -120,7 +120,7 @@ read.quake.mdl <- function(filepath, do_checks = FALSE) {
         this_frame$min_vertex = readBin(fh, integer(), n = 4, size = 1, signed = FALSE, endian = endian);
         # same for max vertex position.
         this_frame$max_vertex = readBin(fh, integer(), n = 4, size = 1, signed = FALSE, endian = endian);
-        this_frame$name = readChar(fh, 16L); # frame name.
+        this_frame$name = readChar(fh, 16L, useBytes = TRUE); # frame name.
 
         # the 4 values are: 1-3=packed position 255 (x,y,z), 4=index into normal list.
         this_frame$vertex_coords_raw = matrix(readBin(fh, integer(), n = (mdl$header$num_verts * 4L), size = 1, signed = FALSE, endian = endian), ncol = 4L, byrow = TRUE);
@@ -140,7 +140,7 @@ read.quake.mdl <- function(filepath, do_checks = FALSE) {
           this_simple_frame$min_vertex = readBin(fh, integer(), n = 4, size = 1, signed = FALSE, endian = endian);
           # same for max vertex position.
           this_simple_frame$max_vertex = readBin(fh, integer(), n = 4, size = 1, signed = FALSE, endian = endian);
-          this_simple_frame$name = readChar(fh, 16L); # frame name.
+          this_simple_frame$name = readChar(fh, 16L, useBytes = TRUE); # frame name.
           this_simple_frame$vertex_coords_raw = matrix(readBin(fh, integer(), n = (mdl$header$num_verts * 4L), size = 1, signed = FALSE, endian = endian), ncol = 4L, byrow = TRUE);
           this_simple_frame$vertex_coords = unpack.vertex.coords(this_simple_frame$vertex_coords_raw[,1:3], mdl$header);
           this_simple_frame$vertex_normals = lookup.q1.normals(this_simple_frame$vertex_coords_raw[,4]);

@@ -50,7 +50,7 @@ read.quake.md2 <- function(filepath, anim = FALSE) {
   if(header$num_skins > 0L) {
     for(i in 1:header$num_skins) {
       #md2$skins[[i]] = readBin(fh, character());
-      md2$skins[[i]] = readChar(fh, 64L);
+      md2$skins[[i]] = readChar(fh, 64L, useBytes = TRUE);
     }
   }
 
@@ -105,7 +105,7 @@ read.quake.md2 <- function(filepath, anim = FALSE) {
       # read model data: vertex coords (and normal vector indices into pre-defined normal vector)
       this_frame$scale = readBin(fh, numeric(), n = 3L, size = 4L);
       this_frame$translate = readBin(fh, numeric(), n = 3L, size = 4L);
-      this_frame$name = readChar(fh, 16L);
+      this_frame$name = readChar(fh, 16L, useBytes = TRUE);
       if(header$num_vertices > 0L) {
         this_frame$vertex_coords = matrix(rep(NA, (3 * header$num_vertices)), ncol = 3L);
         this_frame$vertex_normals = matrix(rep(NA, (3 * header$num_vertices)), ncol = 3L);
