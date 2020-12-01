@@ -234,30 +234,53 @@ plotwal.mipmap <- function(wal, mip_level = 0L, apply_palette = wal::pal_q2()) {
   img_width = get.wal.mipmap.widths(wal$header$width)[mip_level+1L];
   img_height = get.wal.mipmap.heights(wal$header$height)[mip_level+1L];
 
-  if(mip_level == 0L) {
-    img = wal$image;
-  } else if(mip_level == 1L) {
-    img = wal$image_mip_level1;
-  } else if(mip_level == 2L) {
-    img = wal$image_mip_level2;
-  } else { # 3
-    img = wal$image_mip_level3;
+  if(is.null(apply_palette)) {
+    warning("The wal instance contains no final image and none supplied in parameter 'apply_palette'. Using grayscale preview palette.");
+    apply_palette = cbind(0L:255L, 0L:255L, 0L:255L);
   }
-  img = NULL;
+  check.palette(apply_palette);
+  img = apply.palette.to.rawdata(raw_data, apply_palette, img_width , img_height);
+  graphics::plot(imager::as.cimg(array(img, dim=c(img_width, img_height, 1, 3))));
+}
 
-  if(! is.null(img)) {
-    graphics::plot(imager::as.cimg(array(img, dim=c(img_width, img_height, 1, 3))));
-  } else {
+
+#' @title Plot raw pixel index data as image.
+#'
+#' @param raw_data integer vector in containing width * height values in range 0..255, and optionally additional mipmap data at the end (which will be ignored). The raw image data. Can be a Q2 WAL data,  Q1 miptex data, or anything else.
+#'
+#' @param width positive integer, the image width.
+#'
+#' @param height positive integer, the image height.
+#'
+#' @examples
+#' \dontrun{
+#' # Plot the Q1 shambler skin:
+#' mdl = read.quake.mdl("~/data/q1_pak/progs/shambler.mdl");
+#' plotwal.rawdata(mdl$skins$skin_pic, mdl$header$skin_width,
+#'  mdl$header$skin_height, apply_palette = pal_q1());
+#' }
+#'
+#' @inheritParams read.wal
+#' @export
+plotwal.rawdata <- function(raw_data, width, height, apply_palette = wal::pal_q2()) {
+  img_size = width * height;
+  if(length(raw_data) > img_size) {
+    raw_data = raw_data[1L:img_size]; # cut off mipmap data, if any.
+  }
+
+  if(length(raw_data) == img_size) {
     if(is.null(apply_palette)) {
       warning("The wal instance contains no final image and none supplied in parameter 'apply_palette'. Using grayscale preview palette.");
       apply_palette = cbind(0L:255L, 0L:255L, 0L:255L);
     }
     check.palette(apply_palette);
-    img = apply.palette.to.rawdata(raw_data, apply_palette, img_width , img_height);
-    graphics::plot(imager::as.cimg(array(img, dim=c(img_width, img_height, 1, 3))));
+    img = apply.palette.to.rawdata(raw_data, apply_palette, width , height);
+    graphics::plot(imager::as.cimg(array(img, dim=c(width, height, 1, 3))));
+  } else {
+    stop(sprintf("Image raw_data too small (%d) for given width %d and height %d, expected at least %d.\n", length(raw_data), width, height, img_size));
   }
-
 }
+
 
 #' @title Retrieve raw data for given mipmap level from WAL instance.
 #'
