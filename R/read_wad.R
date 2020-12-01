@@ -153,6 +153,19 @@ wad_dir.types.string <- function() {
 }
 
 
+#' @title Get file extensions for WAD dir entry type strings.
+#'
+#' @keywords internal
+#'
+#' @return named list, which maps \code{wad_dir.types.string}s to file extensions. Afaik, there are not standard file extensions for these file types, and I made the ones used here up.
+#'
+#' @seealso wad_dir.types.string
+wad_dir.fileext.mapping <- function() {
+  ext_mapping = list("color_palette" = '.qpl', "pic_status_bar" = '.psb', "texture" = '.q1t', "pic_console" = '.pco', "default" = '.qrs');
+  return(ext_mapping);
+}
+
+
 #' @title List WAD file contents.
 #'
 #' @param wad a wad instance, see \code{read.wad}. Alternatively  a character string, which will be interpreted as a filepath to a WAD file that should be loaded.
@@ -174,15 +187,23 @@ wad.contents <- function(wad) {
 #'
 #' @param outdir character string, the output directory in which the files should be created. The filenames are derived from the data in the WAD.
 #'
+#' @param file_ext_mapping named list, with keys corresponding to the type names and values are file extensions, including the dot, to use for them.
+#'
 #' @note One can read extracted textures with \code{read.quake1miptex()}.
 #'
 #' @export
-wad.extract <- function(wad_filepath, outdir = getwd()) {
+wad.extract <- function(wad_filepath, outdir = getwd(), file_ext_mapping = wad_dir.fileext.mapping()) {
   wad = read.wad(wad_filepath);
   if(nrow(wad$dir_entries) > 0L) {
     for(row_idx in 1:nrow(wad$dir_entries)) {
       out_filename_cleaned = wad.texname.clean(wad$dir_entries$dir_name[row_idx]);
-      out_filepath = file.path(outdir, out_filename_cleaned);
+
+      file_ext = file_ext_mapping$default;
+      if(wad$dir_entries$type_string[row_idx] %in% file_ext_mapping) {
+        file_ext = file_ext_mapping[[wad$dir_entries$type_string[row_idx]]];
+      }
+
+      out_filepath = file.path(outdir, paste(out_filename_cleaned, file_ext));
       save.filepart(wad_filepath, wad$dir_entries$offset[row_idx], wad$dir_entries$dsize[row_idx], out_filepath);
     }
   } else {
@@ -199,8 +220,8 @@ wad.extract <- function(wad_filepath, outdir = getwd()) {
 #'
 #' @keywords internal
 wad.texname.clean <- function(texnames) {
-  texnames = gsub("\\*", "s_", texnames);
-  texnames = gsub("\\+", "p_", texnames);
+  texnames = gsub("\\*", "s__", texnames);
+  texnames = gsub("\\+", "p__", texnames);
   return(texnames);
 }
 

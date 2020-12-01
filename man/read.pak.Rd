@@ -9,6 +9,9 @@ read.pak(filepath)
 \arguments{
 \item{filepath}{character string, path to the file including extension.}
 }
+\value{
+a 'pak' instance.
+}
 \description{
 Read Quake PAK archive.
 }

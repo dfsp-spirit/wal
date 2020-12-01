@@ -4,12 +4,18 @@
 \alias{wad.extract}
 \title{Extract WAD contents into existing directory.}
 \usage{
-wad.extract(wad_filepath, outdir = getwd())
+wad.extract(
+  wad_filepath,
+  outdir = getwd(),
+  file_ext_mapping = wad_dir.fileext.mapping()
+)
 }
 \arguments{
 \item{wad_filepath}{character string, path to input WAD file.}
 
 \item{outdir}{character string, the output directory in which the files should be created. The filenames are derived from the data in the WAD.}
+
+\item{file_ext_mapping}{named list, with keys corresponding to the type names and values are file extensions, including the dot, to use for them.}
 }
 \description{
 Extract WAD contents into existing directory.

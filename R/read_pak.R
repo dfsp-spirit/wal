@@ -4,6 +4,8 @@
 #'
 #' @param filepath character string, path to the file including extension.
 #'
+#' @return a 'pak' instance.
+#'
 #' @examples
 #' \dontrun{
 #'    pakf = '~/.steam/steam/steamapps/common/Quake/Id1/PAK0.PAK';
@@ -38,8 +40,42 @@ read.pak <- function(filepath) {
     entry_offsets[[entry_idx]] = readBin(fh, integer(), n = 1L, size = 4L, endian = endian); # file data offset.
     entry_sizes[[entry_idx]] = readBin(fh, integer(), n = 1L, size = 4L, endian = endian); # file data size.
   }
-  pak$contents = data.frame('name' = entry_file_names, 'offset' = entry_offsets, 'size' = entry_sizes);
+  pak$contents = data.frame('name' = entry_file_names, 'offset' = entry_offsets, 'size' = entry_sizes, stringsAsFactors = FALSE);
 
   class(pak) = c(class(pak), 'pak');
   return(pak);
+}
+
+
+#' @title Extract PAK contents into existing directory.
+#'
+#' @param pak_filepath character string, path to input PAK file.
+#'
+#' @param outdir character string, the output directory in which the files should be created. Must be writeable. The sub directories and filenames are derived from the data in the WAD.
+#'
+#' @note PAK files can contain a directory structure, and new subdirectories will be created under \code{outdir} as needed to preserve it.
+#'
+#' @export
+pak.extract <- function(pak_filepath, outdir = getwd()) {
+  if(! dir.exists(outdir)) {
+    stop(sprintf("Base output directory '%d' does not exist.\n", outdir));
+  }
+  pak = read.pak(pak_filepath);
+  if(nrow(pak$contents) > 0L) {
+    for(row_idx in 1:nrow(pak$contents)) {
+      out_filename_with_dir_part = pak$contents$name[row_idx]; # something like 'e1u1/metal2_2'.
+
+      out_subdirs = file.path(outdir, dirname(out_filename_with_dir_part));
+      if(! dir.exists(out_subdirs)) {
+        dir.create(out_subdirs, recursive = TRUE);
+      }
+
+      out_filename = basename(out_filename_with_dir_part);
+
+      out_filepath = file.path(out_subdirs, out_filename);
+      save.filepart(pak_filepath, pak$contents$offset[row_idx], pak$contents$size[row_idx], out_filepath);
+    }
+  } else {
+    warning("Empty PAK file.");
+  }
 }
