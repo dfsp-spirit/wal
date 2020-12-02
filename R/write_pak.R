@@ -18,7 +18,17 @@ pak.create <- function(out_pakfile, contents_dir) {
   }
 
   # Collect data to write.
-  pak_contents_filenames = list.files(path = contents_dir, full.names = FALSE, recursive = TRUE);
+  pak_contents_filenames_pre = list.files(path = contents_dir, full.names = FALSE, recursive = TRUE);
+
+  pak_contents_filenames = c(); # Filtered valid filenames.
+  for(file_entry in pak_contents_filenames_pre) {
+    if(nchar(file_entry) <= 56L) {
+      pak_contents_filenames = c(pak_contents_filenames, file_entry);
+    } else {
+      warning(sprintf("Skipping invalid entry '%s', entry names are limited to 56 characters.\n", file_entry));
+    }
+  }
+
   num_files = length(pak_contents_filenames);
 
   pak_contents_offsets = rep(NA, num_files); # offset of file in PAK archive.
@@ -29,6 +39,9 @@ pak.create <- function(out_pakfile, contents_dir) {
   if(num_files > 0L) {
     for(file_idx in 1:num_files) {
       fname = pak_contents_filenames[[file_idx]];
+      if(nchar(fname) > 56L) {
+        stop(sprintf("Invalid entry '%s', entry names are limited to 56 characters.\n", fname));
+      }
       pak_contents_lengths[[file_idx]] = file.size(file.path(contents_dir, fname));
       pak_contents_offsets[[file_idx]] = current_offset; # start offset of file data in PAK.
       current_offset = current_offset + pak_contents_lengths[[file_idx]];
@@ -66,7 +79,14 @@ pak.write <- function(out_pakfile, contents_dir, filetable, filetable_at_end = T
   # Write filetable before data if requested. This is reflected in the header (ft_offset).
   if(! filetable_at_end) {
     for(file_entry_idx in 1:nrow(filetable)) {
-      writeChar(filetable$name[[file_entry_idx]], fh, nchars = 56L, useBytes = TRUE);
+      entry_name = filetable$name[[file_entry_idx]];
+      if(nchar(entry_name) > 56L) {
+        # We cannot simply skip here, all the offsets afterwards would be wrong.
+        stop(sprintf("Invalid entry '%s', entries are limited to 56 characters.\n", entry_name));
+      }
+      writeChar(entry_name, fh, nchars = nchar(entry_name), useBytes = TRUE);
+      writeBin(as.raw(rep(0L, (56L - nchar(entry_name)))), fh, endian = endian); # fill remaining space up to max 56 bytes with zeroes.
+
       writeBin(filetable$offset[[file_entry_idx]], fh, size = 4L, endian = endian);
       writeBin(filetable$size[[file_entry_idx]], fh, size = 4L, endian = endian);
     }
@@ -92,7 +112,14 @@ pak.write <- function(out_pakfile, contents_dir, filetable, filetable_at_end = T
   # Write filetable after data if requested. This is reflected in the header (ft_offset).
   if(filetable_at_end) {
     for(file_entry_idx in 1:nrow(filetable)) {
-      writeChar(filetable$name[[file_entry_idx]], fh, nchars = 56L, useBytes = TRUE);
+      entry_name = filetable$name[[file_entry_idx]];
+      if(nchar(entry_name) > 56L) {
+        # We cannot simply skip here, all the offsets afterwards would be wrong.
+        stop(sprintf("Invalid entry '%s', entries are limited to 56 characters.\n", entry_name));
+      }
+      writeChar(entry_name, fh, nchars = nchar(entry_name), useBytes = TRUE);
+      writeBin(as.raw(rep(0L, (56L - nchar(entry_name)))), fh, endian = endian); # fill remaining space up to max 56 bytes with zeroes.
+
       writeBin(filetable$offset[[file_entry_idx]], fh, size = 4L, endian = endian);
       writeBin(filetable$size[[file_entry_idx]], fh, size = 4L, endian = endian);
     }
