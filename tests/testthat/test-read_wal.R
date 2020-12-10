@@ -30,6 +30,8 @@ testthat::test_that("We can plot a WAL instance including mipmaps, and with cust
 
   plotwal.mipmap(wal, apply_palette = wal::pal_q1());
 
+  plot(wal);
+
   testthat::expect_error(plotwal.mipmap(wal, apply_palette = wal::pal_q2(), mip_level = 4)); # invalid mip_level
 })
 

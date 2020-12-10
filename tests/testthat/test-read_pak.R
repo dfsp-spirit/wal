@@ -12,6 +12,10 @@ testthat::test_that("We can read a PAK file.", {
   testthat::expect_false(is.null(pak$contents));
   testthat::expect_equal(nrow(pak$contents), 339L);
   testthat::expect_true(is.data.frame(pak$contents));
+
+  # extract PAK file
+  td = tempdir();
+  pak.extract(pakf, outdir = td);
 })
 
 
