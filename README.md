@@ -1,5 +1,5 @@
 # wal
-Tools to work with Quake game assets in R. Read, write, create and export bitmap images in WAL file format in R. Useful for messing with Quake and Quake II game textures. Includes tools to extract WAD and PAK files. Can read Quake and Quake II models in MDL and MD2 formats and allows for exporting to standard mesh formats.
+Tools to work with Quake game assets in [R](https://www.r-project.org/). Read, write, create and export bitmap images in WAL file format in R. Useful for messing with Quake and Quake II game textures. Includes tools to extract WAD and PAK files. Can read Quake and Quake II models in MDL and MD2 formats and allows for exporting to standard mesh formats.
 
 ![Vis](./vignettes/Bricks050_256_Color.jpg?raw=true "Example Game texture.")
 
@@ -34,7 +34,7 @@ Related Formats and Features:
 
 ## Installation
 
-I recommend to install the [stable wal version from CRAN](https://cran.r-project.org/package=wal):
+I recommend to install the [stable wal version from CRAN](https://cran.r-project.org/package=wal). In your R session:
 
     install.packages("wal");
 
