@@ -21,7 +21,7 @@ read.wad <- function(filepath) {
 
   endian = 'little';
 
-  wad = list('header' = list(), 'wad_dir' = list());
+  wad = list('header' = list());
 
   wad$header$magic = readChar(fh, 4L);
 
@@ -54,8 +54,7 @@ read.wad <- function(filepath) {
 
   wadentry_type_string = get.wadentry.type.strings(wadentry_type);
 
-  wad_dir_entries = data.frame("offset" = wadentry_offset, "dsize" = wadentry_dsize, "size" = wadentry_size, "type" = wadentry_type, "type_string" = wadentry_type_string, "compression" = wadentry_compression, "dummy" = wadentry_dummy, "dir_name" = wadentry_dir_name, stringsAsFactors = FALSE);
-  wad$dir_entries = wad_dir_entries;
+  wad$contents = data.frame("offset" = wadentry_offset, "dsize" = wadentry_dsize, "size" = wadentry_size, "type" = wadentry_type, "type_string" = wadentry_type_string, "compression" = wadentry_compression, "dummy" = wadentry_dummy, "dir_name" = wadentry_dir_name, stringsAsFactors = FALSE);
 
   class(wad) = c(class(wad), "wad");
   return(wad);
@@ -135,10 +134,10 @@ save.filepart <- function(infile, read_from, read_len, outfile) {
 #'
 #' @export
 print.wad <- function(x, ...) {
-  num_palettes = length(which(x$dir_entries$type == 64L));
-  num_pic_statbar = length(which(x$dir_entries$type == 66L));
-  num_tex = length(which(x$dir_entries$type == 68L));
-  num_pic_console = length(which(x$dir_entries$type == 69L));
+  num_palettes = length(which(x$contents$type == 64L));
+  num_pic_statbar = length(which(x$contents$type == 66L));
+  num_tex = length(which(x$contents$type == 68L));
+  num_pic_console = length(which(x$contents$type == 69L));
   cat(sprintf("WAD file holding %d palettes, %d statbar pics, %d textures and %d console pics.\n", num_palettes, num_pic_statbar, num_tex, num_pic_console));
 }
 
@@ -176,7 +175,7 @@ wad.contents <- function(wad) {
   if(is.character(wad)) {
     wad = read.wad(wad);
   }
-  contents = data.frame("type" = wad$dir_entries$type_string, "name" = wad$dir_entries$dir_name, "size" = wad$dir_entries$size, stringsAsFactors = FALSE);
+  contents = data.frame("type" = wad$contents$type_string, "name" = wad$contents$dir_name, "size" = wad$contents$size, stringsAsFactors = FALSE);
   return(contents);
 }
 
@@ -194,17 +193,17 @@ wad.contents <- function(wad) {
 #' @export
 wad.extract <- function(wad_filepath, outdir = getwd(), file_ext_mapping = wad_dir.fileext.mapping()) {
   wad = read.wad(wad_filepath);
-  if(nrow(wad$dir_entries) > 0L) {
-    for(row_idx in 1:nrow(wad$dir_entries)) {
-      out_filename_cleaned = wad.texname.clean(wad$dir_entries$dir_name[row_idx]);
+  if(nrow(wad$contents) > 0L) {
+    for(row_idx in 1:nrow(wad$contents)) {
+      out_filename_cleaned = wad.texname.clean(wad$contents$dir_name[row_idx]);
 
       file_ext = file_ext_mapping$default;
-      if(wad$dir_entries$type_string[row_idx] %in% file_ext_mapping) {
-        file_ext = file_ext_mapping[[wad$dir_entries$type_string[row_idx]]];
+      if(wad$contents$type_string[row_idx] %in% file_ext_mapping) {
+        file_ext = file_ext_mapping[[wad$contents$type_string[row_idx]]];
       }
 
       out_filepath = file.path(outdir, paste(out_filename_cleaned, file_ext));
-      save.filepart(wad_filepath, wad$dir_entries$offset[row_idx], wad$dir_entries$dsize[row_idx], out_filepath);
+      save.filepart(wad_filepath, wad$contents$offset[row_idx], wad$contents$dsize[row_idx], out_filepath);
     }
   } else {
     warning("Empty WAD file.");
