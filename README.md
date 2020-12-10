@@ -1,5 +1,5 @@
 # wal
-Read, write, create and export bitmap images in WAL file format in R. Useful for messing with Quake and Quake II game textures. Includes tools to extract WAD and PAK files. Can read Quake and Quake II models in MDL and MD2 formats.
+Tools to work with Quake game assets in R. Read, write, create and export bitmap images in WAL file format in R. Useful for messing with Quake and Quake II game textures. Includes tools to extract WAD and PAK files. Can read Quake and Quake II models in MDL and MD2 formats and allows for exporting to standard mesh formats.
 
 ![Vis](./vignettes/Bricks050_256_Color.jpg?raw=true "Example Game texture.")
 
@@ -29,7 +29,7 @@ Related Formats and Features:
 * Extracting WAD archives to a directory.
 * Reading, visualizing, and exporting Q1 Mipmap format textures. These are the textures used by Quake I, and they are typically stored directly in the binary maps (BSP files) or in WAD texture archives (see above). The Q1 Mipmap Texture format is very similar to the Quake II WAL format.
 * Reading and extracting 'PAK' archives.
-* Reading and exporting Quake models, including Quake MDL files and Quake II MD2 files.
+* Reading and exporting Quake models, including Quake MDL files and Quake II MD2 files. You can visualize them directly in R with 'rgl' or export them to standard model file formats like '.obj' format to open them in standard modeling software.
 
 
 ## Installation
