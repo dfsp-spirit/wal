@@ -67,7 +67,7 @@ To install the development version (no complaints or bug reports, please):
     wal = img.to.wal(jpeg::readJPEG(jpeg_file));
     wal::writeWAL("~/myfile.wal", wal);
 
-For more information, read the detailed vignette that comes with the package.
+For more information, read the [detailed vignette](https://cran.r-project.org/web/packages/wal/vignettes/wal.html) that comes with the package.
 
 ## References
 
