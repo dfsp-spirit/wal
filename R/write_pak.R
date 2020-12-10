@@ -34,8 +34,8 @@ pak.create <- function(out_pakfile, contents_dir) {
   pak_contents_offsets = rep(NA, num_files); # offset of file in PAK archive.
   pak_contents_lengths = rep(NA, num_files); # length of file in bytes.
 
-  pak_header_length = 4L + 4L + 4L; # id char + size int + offset int.
-  current_offset = pak_header_length + 1L; # start AFTER header.
+  pak_header_length = 4L + 1L + 4L + 4L; # id char + eos + size int + offset int.
+  current_offset = pak_header_length; # start AFTER header.
   if(num_files > 0L) {
     for(file_idx in 1:num_files) {
       fname = pak_contents_filenames[[file_idx]];
@@ -63,9 +63,9 @@ pak.create <- function(out_pakfile, contents_dir) {
 #' @inheritParams pak.header.create
 #'
 #' @keywords internal
-pak.write <- function(out_pakfile, contents_dir, filetable, filetable_at_end = TRUE) {
+pak.write <- function(out_pakfile, contents_dir, filetable) {
 
-  pak = pak.header.create(filetable, filetable_at_end = filetable_at_end);
+  pak = pak.header.create(filetable);
 
   # Write data.
   fh = file(out_pakfile, "wb");
@@ -73,24 +73,10 @@ pak.write <- function(out_pakfile, contents_dir, filetable, filetable_at_end = T
 
   endian = 'little';
   writeChar(pak$header$id, fh, useBytes = TRUE, eos = NULL);
+  #writeBin(pak$header$id, fh, endian = endian, useBytes = TRUE);
+  cat(sprintf("Writing ft offset %d, size %d (%d entries).\n", pak$header$ft_offset, pak$header$ft_size, (pak$header$ft_size / 64)))
   writeBin(pak$header$ft_offset, fh, size = 4L, endian = endian);
   writeBin(pak$header$ft_size, fh, size = 4L, endian = endian);
-
-  # Write filetable before data if requested. This is reflected in the header (ft_offset).
-  if(! filetable_at_end) {
-    for(file_entry_idx in 1:nrow(filetable)) {
-      entry_name = filetable$name[[file_entry_idx]];
-      if(nchar(entry_name) > 56L) {
-        # We cannot simply skip here, all the offsets afterwards would be wrong.
-        stop(sprintf("Invalid entry '%s', entries are limited to 56 characters.\n", entry_name));
-      }
-      writeChar(entry_name, fh, nchars = nchar(entry_name), useBytes = TRUE);
-      writeBin(as.raw(rep(0L, (56L - nchar(entry_name)))), fh, endian = endian); # fill remaining space up to max 56 bytes with zeroes.
-
-      writeBin(filetable$offset[[file_entry_idx]], fh, size = 4L, endian = endian);
-      writeBin(filetable$size[[file_entry_idx]], fh, size = 4L, endian = endian);
-    }
-  }
 
   # Write data for all files.
   for(file_entry_idx in 1:nrow(filetable)) {
@@ -105,25 +91,41 @@ pak.write <- function(out_pakfile, contents_dir, filetable, filetable_at_end = T
       if(length(raw_data) != read_len) {
         stop(sprintf("Could not read %d bytes for file '%s'\n", read_len, source_file));
       }
+      current_pos = seek(fh, where = NA);
+      if(current_pos != (filetable$offset[[file_entry_idx]] - 1L)) {
+        warning(sprintf("At position %d before writing %s data, expected %d.\n", current_pos, source_file, (filetable$offset[[file_entry_idx]])));
+      }
       writeBin(raw_data, fh, endian = endian);
     }
   }
 
-  # Write filetable after data if requested. This is reflected in the header (ft_offset).
-  if(filetable_at_end) {
-    for(file_entry_idx in 1:nrow(filetable)) {
-      entry_name = filetable$name[[file_entry_idx]];
-      if(nchar(entry_name) > 56L) {
-        # We cannot simply skip here, all the offsets afterwards would be wrong.
-        stop(sprintf("Invalid entry '%s', entries are limited to 56 characters.\n", entry_name));
-      }
-      writeChar(entry_name, fh, nchars = nchar(entry_name), useBytes = TRUE);
-      writeBin(as.raw(rep(0L, (56L - nchar(entry_name)))), fh, endian = endian); # fill remaining space up to max 56 bytes with zeroes.
-
-      writeBin(filetable$offset[[file_entry_idx]], fh, size = 4L, endian = endian);
-      writeBin(filetable$size[[file_entry_idx]], fh, size = 4L, endian = endian);
-    }
+  # Write filetable after data.
+  current_pos = seek(fh, where = NA);
+  if(current_pos != (pak$header$ft_offset - 1L)) {
+    warning(sprintf("At position %d before writing file table, expected %d.\n", current_pos, (pak$header$ft_offset)));
   }
+  cat(sprintf("Writing file table at position %d.\n", current_pos));
+
+  for(file_entry_idx in 1:nrow(filetable)) {
+    entry_name = filetable$name[[file_entry_idx]];
+    #cat(sprintf("Writing file table entry for file '%s'.\n", entry_name));
+    writeChar(entry_name, fh, useBytes = TRUE);
+    if(nchar(entry_name) < 56L) {
+      if(nchar(entry_name) < 1L) {
+        stop("Entry file name has 0 length.");
+      } else {
+        pad_length = 56L - nchar(entry_name);
+        cat(sprintf("Entry '%s' has %d chars, adding padding of %d.\n", entry_name, nchar(entry_name), pad_length));
+        writeBin(as.raw(rep(0L, pad_length)), fh, endian = endian); # fill remaining space up to max 56 bytes with zeroes.
+
+      }
+
+    }
+
+    writeBin(filetable$offset[[file_entry_idx]], fh, size = 4L, endian = endian);
+    writeBin(filetable$size[[file_entry_idx]], fh, size = 4L, endian = endian);
+  }
+
 }
 
 
@@ -131,24 +133,17 @@ pak.write <- function(out_pakfile, contents_dir, filetable, filetable_at_end = T
 #'
 #' @param filetable data.frame, the PAK contents filetable.
 #'
-#' @param filetable_at_end logical, whether to place the filetable at the end of the file, after all file data. If FALSE, it will be places after the PAK header, before the file data. Should not matter, leave this alone if in doubt.
-#'
 #' @return named list, the PAK stub. The only entry is the 'header' list.
 #'
 #' @keywords internal
-pak.header.create <- function(filetable, filetable_at_end = TRUE) {
+pak.header.create <- function(filetable) {
   pak = list('header' = list());
   pak$header$id = "PACK";
-  pak$header$ft_size = nrow(filetable) * 64L;
+  pak$header$ft_size = as.integer(nrow(filetable) * 64L);
 
-  pak_header_size = 4L + 4L + 4L; # id + size + offset.
-  total_file_size = sum(filetable$size); # length of file data.
-
-  if(filetable_at_end) {
-    pak$header$ft_offset = pak_header_size + total_file_size + 1L
-  } else {
-    pak$header$ft_offset = pak_header_size + 1L; # place filetable directly after header.
-  }
+  pak_header_size = 12L; # id chars + size + offset.
+  total_contents_size = sum(filetable$size); # length of file data.
+  pak$header$ft_offset = pak_header_size + total_contents_size;
   return(pak);
 }
 

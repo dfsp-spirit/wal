@@ -22,20 +22,30 @@ read.pak <- function(filepath) {
 
   pak$header$id = readChar(fh, 4L, useBytes = TRUE);
 
+  #current_pos = seek(fh, where = NA);
+  #cat(sprintf("At position %d after reading id string.\n", current_pos));
+
   if(pak$header$id != "PACK") {
     stop(sprintf("File '%s' not in Quake PACK format.\n", filepath));
   }
 
   pak$header$ft_offset = readBin(fh, integer(), n = 1L, size = 4L, endian = endian); # file table offset.
   pak$header$ft_size = readBin(fh, integer(), n = 1, size = 4, endian = endian); # size of file table.
-  pak$header$derived$num_files = pak$header$ft_size / 64L;
+  pak$header$derived$num_files = as.integer(pak$header$ft_size / 64L);
 
-  # read file data.
+  # Read file table.
   seek(fh, where = pak$header$ft_offset, origin = "start");
+  cat(sprintf("Reading file table with %d entries at offset %d.\n", pak$header$derived$num_files, pak$header$ft_offset));
+
+  if(pak$header$ft_offset < 0L | pak$header$ft_size < 0L) {
+    stop(sprintf("Invalid entries read: file table offset and/or size must not be negative but are %d and %d.\n", pak$header$ft_offset, pak$header$ft_size));
+  }
+
   entry_file_names = rep(NA, pak$header$derived$num_files);
   entry_offsets = rep(NA, pak$header$derived$num_files);
   entry_sizes = rep(NA, pak$header$derived$num_files);
   for(entry_idx in 1:pak$header$derived$num_files) {
+    cat(sprintf("Reading FT entry %d of %d.\n", entry_idx, pak$header$derived$num_files));
     entry_file_names[[entry_idx]] = readChar(fh, 56, useBytes = TRUE);
     entry_offsets[[entry_idx]] = readBin(fh, integer(), n = 1L, size = 4L, endian = endian); # file data offset.
     entry_sizes[[entry_idx]] = readBin(fh, integer(), n = 1L, size = 4L, endian = endian); # file data size.
