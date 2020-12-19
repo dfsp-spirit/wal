@@ -12,3 +12,19 @@ testthat::test_that("We can extract a WAD file using qarchive.extract", {
 
   testthat::expect_true(file.exists(file.path(td, 'brimstone2.qrs')));
 })
+
+
+testthat::test_that("We can extract a PAK file using qarchive.extract", {
+  #pakf = system.file("extdata", "test.pak", package = "wal", mustWork = TRUE);
+  pakf = file.path("~/data/PAK0.PAK");
+  if(! file.exists(pakf)) {
+    testthat::skip("Test PAK file available");
+  }
+
+  # extract PAK
+  td = tempdir();
+  qarchive.extract(pakf, outdir = td);
+
+  testthat::expect_true(file.exists(file.path(td, 'default.cfg')));
+})
+
