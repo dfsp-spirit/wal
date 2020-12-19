@@ -1,6 +1,7 @@
 ^.*\.Rproj$
 ^web/c/read_wal.c$
 web/c/
+web
 ^\.Rproj\.user$
 ^Meta$
 ^\.DS_Store$

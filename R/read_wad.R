@@ -202,7 +202,7 @@ wad.extract <- function(wad_filepath, outdir = getwd(), file_ext_mapping = wad_d
         file_ext = file_ext_mapping[[wad$contents$type_string[row_idx]]];
       }
 
-      out_filepath = file.path(outdir, paste(out_filename_cleaned, file_ext));
+      out_filepath = file.path(outdir, paste(out_filename_cleaned, file_ext, sep=""));
       save.filepart(wad_filepath, wad$contents$offset[row_idx], wad$contents$dsize[row_idx], out_filepath);
     }
   } else {

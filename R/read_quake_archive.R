@@ -5,12 +5,12 @@
 #'
 #' @param outdir character string, path to an existing and writeable output directory into which to extract the archive.
 #'
-#' @param do_pre_checks logical, whether to perform extra sanity checks on the other parameters.
-#'
 #' @param format character string, of one 'auto' to detect from filename, 'QARCHIVE_TYPE_WAD' for WAD2, or 'QARCHIVE_TYPE_PAK' for PACK.
 #'
+#' @param do_pre_checks logical, whether to perform extra sanity checks on the other parameters.
+#'
 #' @export
-qarchive.extract <- function(filepath, outdir, do_pre_checks = TRUE, format = 'auto') {
+qarchive.extract <- function(filepath, outdir, format = 'auto', do_pre_checks = TRUE) {
 
   if(do_pre_checks) {
     if(! file.exists(filepath)) {

@@ -20,6 +20,7 @@ testthat::test_that("We can read a WAD file.", {
   # extract WAD
   td = tempdir();
   wad.extract(wadf, outdir = td);
+  testthat::expect_true(file.exists(file.path(td, 'brimstone2.qrs')));
 
   # load Q1 texture from within the WAD
   qm = read.quake1miptex(wadf, at_offset = 1317632L);
