@@ -16,7 +16,8 @@ library("wal");
 args = commandArgs(trailingOnly = TRUE);
 
 if (length(args) != 2) {
-  stop(sprintf("pakextract -- Extract Quake archives in PAL or WAL format.\nUSAGE: pakextract.R <archive_file> <output_dir>\nEXAMPLES: ./pakextract.R knave.wad ~/mydata/knave_extracted/\n           ./pakextract.R pak0.pak ~/mydata/pak0_extracted/"));
+  cat(sprintf("=== pakextract -- Extract Quake archives in PAK or WAL format. ===\n"));
+  stop(sprintf("USAGE: pakextract.R <archive_file> <output_dir>\nEXAMPLES: ./pakextract.R knave.wad ~/mydata/knave_extracted/\n          ./pakextract.R pak0.pak ."));
 } else {
   wal::qarchive.extract(args[1], args[2]);
 }
