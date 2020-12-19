@@ -3,7 +3,7 @@
 #
 # Dependencies:
 #   Requires the 'wal' R package to be installed.
-#   Note: To install it, start a recent R version and type: install.packages('wal')
+#   Note: To install it, start a session in a recent R version and type: install.packages('wal')
 #
 # USAGE: ./pakextract.R <archive_file> <output_dir>
 #
