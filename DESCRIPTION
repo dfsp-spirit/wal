@@ -1,6 +1,6 @@
 Package: wal
 Type: Package
-Title: Read and Write 'wal' Bitmap Image Files and Other 'Quake' assets
+Title: Read and Write 'wal' Bitmap Image Files and Other 'Quake' Assets
 Version: 0.1.0
 Authors@R: person("Tim", "Schäfer", role = c("aut", "cre"), email = "ts+code@rcmd.org", comment = c(ORCID = "0000-0002-3683-8070"))
 Maintainer: Tim Schäfer <ts+code@rcmd.org>
