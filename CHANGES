@@ -1,7 +1,12 @@
 
 
-* v0.0.2
- - add read support for WAD archives and option to extract the contents.
+* v0.1.0 (aka 54c966e)
+ - add read support for WAD archives and option to extract the contents
+ - add read support for PAK archives and option to extract the contents
+ - add supprot for reading Quake I models (MDL format) and exporting frames to MD3
+ - add supprot for reading Quake II models (MD2 format) and exporting frames to MD3
+ - add support for reading Quake I textures ('textzure lump') and exporting to JPEG or PNG
+ 
 
 
 * v0.0.1 -- Initial Release
