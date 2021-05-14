@@ -78,6 +78,10 @@ Documentation on the WAL format seems sparse. I did not find any official spec s
 
 ## Unit tests and CI
 
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/dfsp-spirit/wal/workflows/R-CMD-check/badge.svg)](https://github.com/dfsp-spirit/wal/actions)
+
 [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/dfsp-spirit/wal?branch=master&svg=true)](https://ci.appveyor.com/project/dfsp-spirit/wal) AppVeyor CI under Windows
+<!-- badges: end -->
 
 
