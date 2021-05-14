@@ -78,8 +78,6 @@ Documentation on the WAL format seems sparse. I did not find any official spec s
 
 ## Unit tests and CI
 
-[![Build Status](https://travis-ci.org/dfsp-spirit/wal.svg?branch=master)](https://travis-ci.org/dfsp-spirit/wal) Travis CI under Linux
-
 [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/dfsp-spirit/wal?branch=master&svg=true)](https://ci.appveyor.com/project/dfsp-spirit/wal) AppVeyor CI under Windows
 
 
