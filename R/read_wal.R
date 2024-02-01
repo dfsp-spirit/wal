@@ -314,19 +314,19 @@ get.wal.mipmap.data <- function(wal, mip_level) {
 #'
 #' @return integer vector of length 4, the mipmap widths.
 #' @keywords internal
-get.wal.mipmap.widths <- function(width_mm0) {
-  return(c(width_mm0, width_mm0/2, width_mm0/4, width_mm0/8));
+get.wal.mipmap.widths <- function(width_mm) {
+  return(c(width_mm, width_mm/2, width_mm/4, width_mm/8));
 }
 
 
 #' @title Compute widths of the 4 mipimap levels from base width.
 #'
-#' @param height_mm interger, the base mipmap height.
+#' @param height_mm integer, the base mipmap height.
 #'
 #' @return integer vector of length 4, the mipmap heights.
 #'
 #' @keywords internal
-get.wal.mipmap.heights <- function(height_mm0) {
-  return(get.wal.mipmap.widths(height_mm0));
+get.wal.mipmap.heights <- function(height_mm) {
+  return(get.wal.mipmap.widths(height_mm));
 }
 

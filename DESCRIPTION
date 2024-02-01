@@ -7,7 +7,6 @@ Maintainer: Tim Schäfer <ts+code@rcmd.org>
 Description: Read 'Quake' assets including bitmap images and textures in 'wal' file format. This package also provides support for extracting these assets from 'WAD' and 'PAK' file archives. It can also read models in 'MDL' and 'MD2' formats.
 License: GPL-2
 Encoding: UTF-8
-LazyData: true
 URL: https://github.com/dfsp-spirit/wal
 BugReports: https://github.com/dfsp-spirit/wal/issues
 Imports:
@@ -21,4 +20,4 @@ Suggests:
     rmarkdown,
     testthat (>= 2.1.0),
 VignetteBuilder: knitr
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.3

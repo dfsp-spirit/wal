@@ -4,7 +4,7 @@
 \alias{get.wal.mipmap.widths}
 \title{Compute widths of the 4 mipimap levels from base width.}
 \usage{
-get.wal.mipmap.widths(width_mm0)
+get.wal.mipmap.widths(width_mm)
 }
 \arguments{
 \item{width_mm}{integer, the base mipmap width.}

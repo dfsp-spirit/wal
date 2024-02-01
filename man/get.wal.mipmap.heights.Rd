@@ -4,10 +4,10 @@
 \alias{get.wal.mipmap.heights}
 \title{Compute widths of the 4 mipimap levels from base width.}
 \usage{
-get.wal.mipmap.heights(height_mm0)
+get.wal.mipmap.heights(height_mm)
 }
 \arguments{
-\item{height_mm}{interger, the base mipmap height.}
+\item{height_mm}{integer, the base mipmap height.}
 }
 \value{
 integer vector of length 4, the mipmap heights.
